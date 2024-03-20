@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>UCCS CS Students</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+    <style>
+        /* Custom styles */
+        /* Blue and orange theme */
+        .navbar {
+            background-color: #000000; /* Black */
+        }
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #FFFFFF !important; /* White */
+        }
+        .button {
+            background-color: #F5E0BC;
+            color: #000000; /* Black */
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            font-weight: bold
+      }
+        .navbar-toggler {
+            border-color: #ffffff !important; /* White */
+        }
+    </style>
+</head>
+<body style = "background-color:powderblue;">
+<div class="container-fluid">
+    <!-- Navbar-->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="https://www.uccs.edu/">
+                <img src="{% static 'images/uccs_logo.png' %}" alt="UCCS CS Students Logo">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+                    <a class="nav-link" href="{% url 'students' %}">Students</a>
+                    <!-- Add other navigation links here -->
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="col-sm-10 mx-auto">
+            <!-- Add block content from HTML template -->
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<!--
+Navbar toggler button
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+-->

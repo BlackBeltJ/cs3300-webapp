@@ -1,0 +1,21 @@
+{% extends 'portfolio_app/base_template.html' %}
+
+{% block content %}
+
+<h1>Edit {{ student.name }}'s Portfolio:</h1>
+<h4>Current Portfolio Information:</h4>
+<p><strong>Title:</strong> {{ portfolio.title }}</p>
+<p><strong>About:</strong> {{ portfolio.about }}</p>
+<p><strong>contact email:</strong> {{ portfolio.contact_email }}</p>
+
+<h4>Update Portfolio Information:</h4>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <a href="{% url 'portfolio-detail' portfolio.id %}" class="btn btn-danger">Cancel</a>
+    <input type="submit" value="Save" class="btn btn-warning">
+  </form>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'portfolio_app/base_template.html' %}
+
+{% block content %}
+    <h1>Student Detail</h1>
+
+    <p><strong>student name:</strong> {{ student.name }}</p>
+    <p><strong>email:</strong> {{ student.email }}</p>
+    <p><strong>student major:</strong> <a href="https://advising.uccs.edu/majors-and-minors">{{ student.major }}</a></p>
+    <p><strong>student portfolio:</strong>
+        <a href="{{ student.portfolio.get_absolute_url }}">{{ student.portfolio.title }}</a>
+    </p>
+{% endblock %}
+
+<!--
+<a href="{% url 'portfolio-details' %}">{{student.portfolio }}</a>
+-->

@@ -1,0 +1,20 @@
+{% extends 'portfolio_app/base_template.html' %}
+
+{% block content %}
+
+<h1>Edit {{ project.title }} Project:</h1>
+<h4>Current Project Information:</h4>
+<p><strong>Title:</strong> {{ project.title }}</p>
+<p><strong>Description:</strong> {{ project.description }}</p>
+
+<h4>Update Project Information:</h4>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <a href="{% url 'project-detail' project.id %}" class="btn btn-danger">Cancel</a>
+    <input type="submit" value="Save" class="btn btn-warning">
+  </form>
+
+{% endblock %}
