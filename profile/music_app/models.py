@@ -34,7 +34,7 @@ class Artist(models.Model):
     ('Instrumental', 'Instrumental')
     )
     name = models.CharField(max_length=200)
-    email = models.CharField("UCCS Email", max_length=200)
+    email = models.CharField("artist email", max_length=200)
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
     instrument = models.CharField(max_length=200, blank = False)
     profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True) 
@@ -52,7 +52,7 @@ class Artist(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField("Project Description", blank = False)
-    portfolio = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
         return self.title

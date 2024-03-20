@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from .models import Project, Profile, Artist
 
   
-class EditPortfolioForm(ModelForm): #forms.Form 
+class EditProfileForm(ModelForm): #forms.Form 
     class Meta:
         model = Profile
         fields = ['title', 'is_active', 'about', 'contact_email']
