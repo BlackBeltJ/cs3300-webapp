@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'music_app', 
     
     # bootstrap5
-    #'django-bootstrap5',
+    'django_bootstrap5',
 ]
 # add support for authenticating users
 AUTHENTICATION_BACKENDS = [

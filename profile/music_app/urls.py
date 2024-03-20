@@ -13,7 +13,7 @@ urlpatterns = [
     # path('', views.index, name='logout'),
     path('students/', views.StudentListView.displayStudents, name='students'),
     # path('student/<int:pk>', views.StudentDetailView.studentDetail, name='student-detail'),
-    # path('student/<int:pk>/profile', views.ProfileDetailView.profileDetail, name='profile-detail'),
+    path('student/<int:pk>/profile', views.ProfileDetailView.profileDetail, name='profile-detail'),
     # #.as_view() is a method that returns a default view function
     # path('student/?/profile/project/<int:pk>', views.ProjectDetailView.projectDetail, name='project-detail'),
     # path('student/<int:pk>/profile/edit', views.editProfile, name='edit-profile'),
