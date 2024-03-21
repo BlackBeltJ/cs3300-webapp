@@ -10,9 +10,10 @@
     <ul class="list-group">
         {% for i in artist_active_profiles %}
             <li class="list-group-item">Name: {{i.name}}
+                <a href="{{ i.get_absolute_url }}" class="btn btn-info">View Artist Details</a>
                 <p><strong>Profile:
                     {{ i.profile.title }}
-                    <a href="{{ i.profile.get_absolute_url }}" class="btn btn-info">View Profile</a>
+                    <a href="{{ i.profile.get_absolute_url }}" class="btn btn-info">View Projects</a>
                 </strong></p>
         </li>
         {% endfor %}

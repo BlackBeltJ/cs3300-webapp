@@ -9,7 +9,7 @@ class Profile(models.Model):
     title = models.CharField(max_length=200)
     is_active = models.BooleanField(default=False, blank = False)
     about = models.TextField("About (Optional)", blank=True)
-    contact_email = models.CharField("Contact Email", max_length=200)
+    contact_email = models.EmailField("Contact Email", max_length=50)
    # student = models.OneToOneField(Student, null=True, on_delete=models.CASCADE, unique=True)
 
     def __str__(self):
@@ -34,7 +34,7 @@ class Artist(models.Model):
     ('Instrumental', 'Instrumental')
     )
     name = models.CharField(max_length=200)
-    email = models.CharField("artist email", max_length=200)
+    email = models.EmailField("artist email", max_length=50)
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
     instrument = models.CharField(max_length=200, blank = False)
     profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True) 
