@@ -1,0 +1,16 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+    <h1>Artist Detail</h1>
+
+    <p><strong>artist name:</strong> {{ artist.name }}</p>
+    <p><strong>email:</strong> {{ artist.email }}</p>
+    <p><strong>artist genre:</strong> <a href="https://www.musicgenreslist.com/">{{ artist.genre }}</a></p>
+    <p><strong>artist profile:</strong>
+        <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
+    </p>
+{% endblock %}
+
+<!--
+<a href="{% url 'portfolio-details' %}">{{student.portfolio }}</a>
+-->

@@ -8,124 +8,124 @@ from .forms import *
 
 def index(request):
     # Render index.html
-    student_active_portfolios = Student.objects.select_related('portfolio').all().filter(portfolio__is_active=True)
-    print('active portfolio query set', student_active_portfolios)
+    artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_active=True)
+    print('active profile query set', artist_active_profiles)
     #context is dictionary that is passed as a template ("variable") to the html file
-    return render(request, 'portfolio_app/index.html', {'student_active_portfolios': student_active_portfolios})
+    return render(request, 'music_app/index.html', {'artist_active_profiles': artist_active_profiles})
 
 #def redirect(request, context):
 #    return render(request)
 
-class StudentListView(generic.ListView):
-    model = Student
-    def displayStudents(request):
-        list_of_students = Student.objects.all()
-        print('list of students', list_of_students)
-        return render(request, 'portfolio_app/student_list.html', context={'list_of_students': list_of_students})
+class ArtistListView(generic.ListView):
+    model = Artist
+    def displayArtists(request):
+        list_of_artists = Artist.objects.all()
+        print('list of artists', list_of_artists)
+        return render(request, 'music_app/artist_list.html', context={'list_of_artists': list_of_artists})
     
-class StudentDetailView(generic.DetailView):
-    model = Student
-    def studentDetail(request, pk):
-        student = Student.objects.get(pk=pk)
-        print(f'student detail -> name: {student.name}, email: {student.email}, major: {student.major}')
-        return render(request, 'portfolio_app/student_detail.html', context={'student': student})
+class ArtistDetailView(generic.DetailView):
+    model = Artist
+    def artistDetail(request, pk):
+        artist = Artist.objects.get(pk=pk)
+        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+        return render(request, 'music_app/artist_detail.html', context={'artist': artist})
     
-class PortfolioDetailView(generic.DetailView):
-    model = Portfolio
-    def portfolioDetail(request, pk):
+class ProfileDetailView(generic.DetailView):
+    model = Profile
+    def profileDetail(request, pk):
         try: 
-            portfolio = Portfolio.objects.get(pk=pk)
-            student = Student.objects.get(portfolio=portfolio)
-            list_of_projects = Project.objects.select_related('portfolio').all().filter(portfolio=portfolio)
-            print(f'portfolio detail -> portfolio name: {portfolio.title}, about: {portfolio.about}, contact email: {portfolio.contact_email}, list of projects: {list_of_projects}')        
-        except portfolio.DoesNotExist:
-            raise Http404('Portfolio does not exist')
+            profile = Profile.objects.get(pk=pk)
+            artist = Artist.objects.get(profile=profile)
+            list_of_projects = Project.objects.select_related('profile').all().filter(profile=profile)
+            print(f'profile detail -> profile name: {profile.title}, about: {profile.about}, contact email: {profile.contact_email}, list of projects: {list_of_projects}')        
+        except profile.DoesNotExist:
+            raise Http404('profile does not exist')
         
-        return render(request, 'portfolio_app/portfolio_detail.html', context={'portfolio': portfolio, 'student': student, 'list_of_projects': list_of_projects})
+        return render(request, 'music_app/profile_detail.html', context={'profile': profile, 'artist': artist, 'list_of_projects': list_of_projects})
 
 class ProjectDetailView(generic.DetailView):
     model = Project
     def projectDetail(request, pk):
         try:
             project = Project.objects.get(pk=pk)
-            portfolio = Portfolio.objects.get(project=project)
-            student = Student.objects.get(portfolio=portfolio)
-            print(f'project detail -> project name: {project.title}, about: {project.description}, portfolio: {project.portfolio.title}')        
+            profile = Profile.objects.get(project=project)
+            artist = Artist.objects.get(profile=profile)
+            print(f'project detail -> project name: {project.title}, about: {project.description}, profile: {project.profile.title}')        
         except project.DoesNotExist:
             raise Http404('Project does not exist')
         
-        return render(request, 'portfolio_app/project_detail.html', context={'project': project, 'student': student, 'portfolio': portfolio})
+        return render(request, 'music_app/project_detail.html', context={'project': project, 'artist': artist, 'profile': profile})
 
-def editPortfolio(request, pk):
-    student = Student.objects.get(pk=pk)
-    portfolio = student.portfolio  
-    form = EditPortfolioForm(instance=portfolio) #request.GET
+def editProfile(request, pk):
+    artist = Artist.objects.get(pk=pk)
+    profile = artist.profile  
+    form = EditProfileForm(instance=profile) #request.GET
     
     if request.method == 'POST':
-        portfolio_data = request.POST.copy()
-        portfolio_data['student'] = student.id
-        form = EditPortfolioForm(portfolio_data, instance=portfolio)
+        profile_data = request.POST.copy()
+        profile_data['artist'] = artist.id
+        form = EditProfileForm(profile_data, instance=profile)
         if form.is_valid():
-            portfolio = form.save(commit=False)
-            portfolio.student = student
+            profile = form.save(commit=False)
+            profile.artist = artist
             
-            portfolio.save()
-            #return redirect('portfolio-detail', pk) # either way works 
-            return HttpResponseRedirect(reverse('portfolio-detail', args=[str(portfolio.id)]))
+            profile.save()
+            #return redirect('profile-detail', pk) # either way works 
+            return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
         
-    context = {'form': form, 'portfolio': portfolio, 'student': student}
-    return render(request, 'portfolio_app/portfolio_form.html', context)
+    context = {'form': form, 'profile': profile, 'artist': artist}
+    return render(request, 'music_app/profile_form.html', context)
 
 def updateProject(request, pk):
     project = Project.objects.get(pk=pk)
-    portfolio = Portfolio.objects.get(project=project)
+    profile = Profile.objects.get(project=project)
     form = ProjectForm(instance=project) #request.GET
     
     if request.method == 'POST':
         project_data = request.POST.copy()
-        project_data['portfolio'] = portfolio.id
+        project_data['profile'] = profile.id
         form = ProjectForm(project_data, instance=project)
         if form.is_valid():
             project = form.save(commit=False)
-            project.portfolio = portfolio
+            project.profile = profile
             
             project.save()
-            #return redirect('portfolio-detail', pk) # either way works 
+            #return redirect('profile-detail', pk) # either way works 
             return HttpResponseRedirect(reverse('project-detail', args=[str(project.id)]))
         
-    context = {'form': form, 'project': project, 'portfolio': portfolio}
-    return render(request, 'portfolio_app/project_form.html', context)
+    context = {'form': form, 'project': project, 'profile': profile}
+    return render(request, 'music_app/project_form.html', context)
 
 def deleteProject(request, pk):
     project = Project.objects.get(pk=pk)
-    portfolio = Portfolio.objects.get(project=project)
-    student = Student.objects.get(portfolio=portfolio)
+    profile = Profile.objects.get(project=project)
+    artist = Artist.objects.get(profile=profile)
     form = ProjectForm(instance=project) #request.GET... might want to change this line
     
     if request.method == 'POST':
         project.delete()
-        return redirect('portfolio-detail', student.id) # either way works 
-        #return HttpResponseRedirect(reverse('portfolio-detail', args=[str(portfolio.id)]))
+        return redirect('profile-detail', artist.id) # either way works 
+        #return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
         
     context = {'form': form, 'project': project}
-    return render(request, 'portfolio_app/delete_project_form.html', context)
+    return render(request, 'music_app/delete_project_form.html', context)
 
-# Create a new project for a portfolio
+# Create a new project for a profile
 def createProject(request, pk):
     form = ProjectForm()
-    portfolio = Portfolio.objects.get(pk=pk)
-    student = Student.objects.get(portfolio=portfolio)
+    profile = Profile.objects.get(pk=pk)
+    artist = Artist.objects.get(profile=profile)
 
     if request.method == 'POST':
         project_data = request.POST.copy()
-        project_data['portfolio'] = pk
+        project_data['profile'] = pk
         form = ProjectForm(project_data)
         if form.is_valid():
             project = form.save(commit=False)
-            project.portfolio = portfolio
+            project.profile = profile
             project.save()
             
-            return redirect('portfolio-detail', student.id)
+            return redirect('profile-detail', artist.id)
         
-    context = {'form': form, 'portfolio': portfolio, 'student': student}
-    return render(request, 'portfolio_app/create_project_form.html', context)
+    context = {'form': form, 'profile': profile, 'artist': artist}
+    return render(request, 'music_app/create_project_form.html', context)

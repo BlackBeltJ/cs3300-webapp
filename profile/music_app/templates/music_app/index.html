@@ -1,0 +1,23 @@
+<!-- inherit from base.html-->
+{% extends "music_app/base_template.html" %}
+
+<!-- Replace block content in base_template.html -->
+{% block content %}
+<h1>Artist Public Profiles</h1>
+
+<h3>List of artists with active profiles</h3>
+<div class="container">
+    <ul class="list-group">
+        {% for i in artist_active_profiles %}
+            <li class="list-group-item">Name: {{i.name}}
+                <a href="{{ i.get_absolute_url }}" class="btn btn-info">View Artist Details</a>
+                <p><strong>Profile:
+                    {{ i.profile.title }}
+                    <a href="{{ i.profile.get_absolute_url }}" class="btn btn-info">View Projects</a>
+                </strong></p>
+        </li>
+        {% endfor %}
+    </ul> 
+</div>   
+
+{% endblock %}

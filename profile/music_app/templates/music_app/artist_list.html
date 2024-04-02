@@ -1,0 +1,16 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+    <h1>List of artists</h1>
+    {% if list_of_artists %}
+        <ul>
+            {% for artist in list_of_artists %}
+                <li>
+                    <a href="{{ artist.get_absolute_url }}">{{artist.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no artists registered.</p>
+    {% endif %}
+{% endblock %}

@@ -5,11 +5,11 @@ from django.db import models
 from django.urls import reverse
 
 # Create your models here.
-class Portfolio(models.Model):  
+class Profile(models.Model):  
     title = models.CharField(max_length=200)
     is_active = models.BooleanField(default=False, blank = False)
     about = models.TextField("About (Optional)", blank=True)
-    contact_email = models.CharField("Contact Email", max_length=200)
+    contact_email = models.EmailField("Contact Email", max_length=50)
    # student = models.OneToOneField(Student, null=True, on_delete=models.CASCADE, unique=True)
 
     def __str__(self):
@@ -19,24 +19,25 @@ class Portfolio(models.Model):
     #if you define this method then Django will automatically
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
-        return reverse('portfolio-detail', args=[str(self.id)])
+        return reverse('profile-detail', args=[str(self.id)])
 
     
-class Student(models.Model):
+class Artist(models.Model):
 #List of choices for major value in database, human readable name
-    MAJOR = (
-    ('CSCI-BS', 'BS in Computer Science'),
-    ('CPEN-BS', 'BS in Computer Engineering'),
-    ('BIGD-BI', 'BI in Game Design and Development'),
-    ('BICS-BI', 'BI in Computer Science'),
-    ('BISC-BI', 'BI in Computer Security'),
-    ('CSCI-BA', 'BA in Computer Science'),
-    ('DASE-BS', 'BS in Data Analytics and Systems Engineering')
+    GENRE = (
+    ('Rock', 'Rock'),
+    ('Pop', 'Pop'),
+    ('Christian/Worship', 'Christian/Worship'),
+    ('Classical', 'Classical'),
+    ('Indie', 'Indie'),
+    ('Jazz', 'Jazz'),
+    ('Instrumental', 'Instrumental')
     )
     name = models.CharField(max_length=200)
-    email = models.CharField("UCCS Email", max_length=200)
-    major = models.CharField(max_length=200, choices=MAJOR, blank = False)
-    portfolio = models.OneToOneField(Portfolio, null=True, on_delete=models.CASCADE, unique=True) 
+    email = models.EmailField("artist email", max_length=50)
+    genre = models.CharField(max_length=200, choices=GENRE, blank = False)
+    instrument = models.CharField(max_length=200, blank = False)
+    profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True) 
     
     def __str__(self):
         return self.name
@@ -45,13 +46,13 @@ class Student(models.Model):
     #if you define this method then Django will automatically
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
-        return reverse('student-detail', args=[str(self.id)])
+        return reverse('artist-detail', args=[str(self.id)])
 
 
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField("Project Description", blank = False)
-    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, default=None)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
         return self.title
