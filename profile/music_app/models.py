@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.urls import reverse
 
 # Create your models here.
@@ -20,7 +17,6 @@ class Profile(models.Model):
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
         return reverse('profile-detail', args=[str(self.id)])
-
     
 class Artist(models.Model):
 #List of choices for major value in database, human readable name
@@ -47,7 +43,6 @@ class Artist(models.Model):
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
         return reverse('artist-detail', args=[str(self.id)])
-
 
 class Project(models.Model):
     title = models.CharField(max_length=200)

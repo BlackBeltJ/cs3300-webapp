@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.views import generic
-from django.http import Http404
 from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.http import Http404
+from django.views import generic
 from .models import *
 from .forms import *
 
