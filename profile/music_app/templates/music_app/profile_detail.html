@@ -8,9 +8,9 @@
 <p><strong>About:</strong> {{ profile.about }}</p>
 <p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 <br>
-<a href="{% url 'create-project' artist.pk %}" class="btn btn-dark">Add Project</a>
+<a href="{% url 'create-project' artist.pk %}" class="btn btn-dark">Create Post</a>
 <br><br>
-<h4>List of {{ artist.name }}'s projects</h4>
+<h4>List of {{ artist.name }}'s posts</h4>
     {% if list_of_projects %}
         <div class="container">
             <ul class="list-group">
@@ -19,8 +19,8 @@
                     <div class="navbar-nav-white">
                     <li class="list-group-item">
                         <strong>{{ project.title }}</strong>
-                        <a href="{{ project.get_absolute_url }}" class="btn btn-info">View Project</a>
-                        <a href="{% url 'update-project' project.pk %}" class="btn btn-info">Edit Project Details</a>
+                        <a href="{{ project.get_absolute_url }}" class="btn btn-info">View Post</a>
+                        <a href="{% url 'update-project' project.pk %}" class="btn btn-info">Edit Post Details</a>
                         <a href="{% url 'delete-project' project.pk %}" class="btn btn-danger">Delete {{ project.title}}</a>
                     </li>
                     </div>
@@ -28,7 +28,7 @@
             </ul>
         </div>
     {% else %}
-        <p>This portfolio has no projects.</p>
+        <p>This portfolio has no posts.</p>
     {% endif %}
 
 {% endblock %}
