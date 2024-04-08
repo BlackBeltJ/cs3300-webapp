@@ -19,7 +19,7 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
     model = Artist
     def createArtistAndProfile(request):
         artist_form = ArtistForm()
-        profile_form = EditProfileForm()
+        profile_form = ProfileForm()
         
         if request.method == 'POST':
             artist_data = request.POST.copy()
@@ -59,8 +59,10 @@ class ProfileOperations(generic.DetailView):
     model = Profile
     def profileDetail(request, pk):
         try: 
-            profile = Profile.objects.get(pk=pk)
-            artist = Artist.objects.get(profile=profile)
+            artist = Artist.objects.get(pk=pk)
+            print(f"artist id: {artist.id}, artist profile: {artist.profile}")
+            profile = artist.profile
+            # profile = Profile.objects.get(pk=artist.profile)
             list_of_projects = Project.objects.select_related('profile').all().filter(profile=profile)
             print(f'profile detail -> profile name: {profile.title}, about: {profile.about}, contact email: {profile.contact_email}, list of projects: {list_of_projects}')        
         except profile.DoesNotExist:
@@ -70,20 +72,21 @@ class ProfileOperations(generic.DetailView):
 
     def editProfile(request, pk):
         artist = Artist.objects.get(pk=pk)
-        profile = artist.profile  
-        form = EditProfileForm(instance=profile) #request.GET
+        print(f"artist id: {artist.id}, artist profile: {artist.profile}")
+        profile = artist.profile
+        form = ProfileForm(instance=profile) #request.GET
         
         if request.method == 'POST':
             profile_data = request.POST.copy()
-            profile_data['artist'] = artist.id
-            form = EditProfileForm(profile_data, instance=profile)
+            #profile_data['artist'] = artist.id
+            form = ProfileForm(profile_data, instance=profile)
             if form.is_valid():
                 profile = form.save(commit=False)
                 profile.artist = artist
                 
                 profile.save()
                 #return redirect('profile-detail', pk) # either way works 
-                return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
+                return HttpResponseRedirect(reverse('profile-detail', args=[str(artist.id)]))
             
         context = {'form': form, 'profile': profile, 'artist': artist}
         return render(request, 'music_app/profile_form.html', context)
@@ -138,8 +141,9 @@ class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edi
     # Create a new project for a profile
     def createProject(request, pk):
         form = ProjectForm()
-        profile = Profile.objects.get(pk=pk)
-        artist = Artist.objects.get(profile=profile)
+        artist = Artist.objects.get(pk=pk)
+        print(f"artist id: {artist.id}, artist profile: {artist.profile}")
+        profile = artist.profile
 
         if request.method == 'POST':
             project_data = request.POST.copy()
@@ -160,7 +164,7 @@ class UserOperations(generic.edit.CreateView):
     def createUser(request):
         user_form = UserCreationForm()
         artist_form = ArtistForm()
-        profile_form = EditProfileForm()
+        profile_form = ProfileForm()
         
         if request.method == 'POST':
             user_form = UserCreationForm(request.POST)

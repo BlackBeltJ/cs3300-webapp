@@ -8,14 +8,19 @@
 <p><strong>About:</strong> {{ profile.about }}</p>
 <p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 
+
 <h4>Update Profile Information:</h4>
   <form action="" method="POST">
     {% csrf_token %}
     <table>
     {{ form.as_table }}
     </table>
-    <a href="{% url 'profile-detail' profile.id %}" class="btn btn-danger">Cancel</a>
+    <a href="{% url 'profile-detail' artist.id %}" class="btn btn-danger">Cancel</a>
     <input type="submit" value="Save" class="btn btn-success">
   </form>
 
 {% endblock %}
+
+<!--
+<p> for dev only: artist id: {{ artist.id }}, profile id: {{ profile.id }} </p>
+-->

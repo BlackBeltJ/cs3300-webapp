@@ -17,7 +17,8 @@ class Profile(models.Model):
     #if you define this method then Django will automatically
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
-        return reverse('profile-detail', args=[str(self.id)])
+        artist = Artist.objects.get(profile=self)
+        return reverse('profile-detail', args=[str(artist.id)])
     
 class Artist(models.Model):
 #List of choices for major value in database, human readable name
@@ -69,5 +70,6 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
-#class User(models.Model):
-#   user_id = models.CharField(max_length=200)
+class User(models.Model):
+    user_id = models.CharField(max_length=200)
+    favorite_song = models.CharField(max_length=200, blank = True)
