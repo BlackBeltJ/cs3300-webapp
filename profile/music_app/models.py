@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+#from django.db.models.query import ImageQuerySet
 
 # Create your models here.
 class Profile(models.Model):  
@@ -39,9 +40,11 @@ class Artist(models.Model):
         self.profile = Profile.objects.create(title=(f"{self.name}'s Profile"), about = (f"This is a new profile for {self.name}"), is_public=True, contact_email=self.email)
         return super(Artist, self).save(*args, **kwargs)
     
-    def delete(self):
+    def delete(self, *args, **kwargs):
+        obj = Profile.objects.select_related('profile' == self)
+        obj.delete()
         self.profile.delete()
-        return super(Artist, self).delete()
+        return super(Artist, self).delete(*args, **kwargs)
     
     def __str__(self):
         return self.name

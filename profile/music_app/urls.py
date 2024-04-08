@@ -8,22 +8,29 @@ urlpatterns = [
     # views.index is the function defined in views.py 
     # name='index' parameter is to dynamically create url
     # example in html ,a href="{% url 'index' %}">Home</a>
-    path('', views.index, name='index'),
+    #.as_view() is a method that returns a default view function
+    #<uuid:pk> is a path converter that matches a UUID
+    path('', views.index, name='index'), # default view, home page
     
+    # login and logout
     path('login/', views.index, name='login'),
     path('logout/', views.index, name='logout'),
     
-    path('artists/', views.ArtistListView.displayArtists, name='artists'),
-    path('artists/<int:pk>', views.ArtistDetailView.artistDetail, name='artist-detail'),
-    path('artists/<int:pk>/profile', views.ProfileDetailView.profileDetail, name='profile-detail'),
-    #.as_view() is a method that returns a default view function
-    path('artist/?/profile/project/<int:pk>', views.ProjectDetailView.projectDetail, name='project-detail'),
-    path('artist/<int:pk>/profile/edit', views.editProfile, name='edit-profile'),
-    #<uuid:pk> is a path converter that matches a UUID
+    # artist operations (display, create, edit, delete, etc)
+    path('artists/', views.ArtistOperations.displayArtists, name='artists'),
+    path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
+    path('create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
+    path('delete_artist/<int:pk>', views.ArtistOperations.deleteArtistAndProfile, name='delete-artist'),
+    
+    # profile operations (display, create, edit, delete, etc)
+    path('artists/<int:pk>/profile', views.ProfileOperations.profileDetail, name='profile-detail'),
+    path('artist/<int:pk>/profile/edit', views.ProfileOperations.editProfile, name='edit-profile'),
+    
+    # project operations (display, create, edit, delete, etc)
+    path('artist/?/profile/project/<int:pk>', views.ProjectOperations.projectDetail, name='project-detail'),
     path('artist/<int:pk>/profile/create_project', views.ProjectOperations.createProject, name='create-project'),
     path('artist/?/profile/update_project/<int:pk>', views.ProjectOperations.updateProject, name='update-project'),
     path('artist/?/profile/delete_project/<int:pk>', views.ProjectOperations.deleteProject, name='delete-project'),
 
-    path('create_artist/', views.CreationOperations.createArtistAndProfile, name='create-artist'),
     #path('register/', views.register, name='register'),
 ]

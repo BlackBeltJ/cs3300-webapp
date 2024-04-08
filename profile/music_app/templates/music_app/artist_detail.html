@@ -9,6 +9,10 @@
     <p><strong>artist profile:</strong>
         <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
     </p>
+
+    <div>
+        <a href="{% url 'delete-artist' artist.id %}" class="btn btn-danger"><strong>Delete Artist</a></strong>
+    </div>
 {% endblock %}
 
 <!--

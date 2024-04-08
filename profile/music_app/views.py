@@ -14,22 +14,48 @@ def index(request):
 
 #def redirect(request, context):
 #    return render(request)
-
-class ArtistListView(generic.ListView):
+    
+class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.CreateView, generic.edit.DeleteView):
     model = Artist
+    def createArtistAndProfile(request):
+        artist_form = ArtistForm()
+        profile_form = EditProfileForm()
+        
+        if request.method == 'POST':
+            artist_data = request.POST.copy()
+            artist_form = ArtistForm(artist_data)
+            if artist_form.is_valid():
+                artist = artist_form.save(commit=False)
+                artist.save()
+                context = {'artist_form': artist_form, 'profile_form': profile_form, 'artist': artist}
+                return redirect('artist-detail', artist.id)
+        
+        context = {'artist_form': artist_form, 'profile_form': profile_form}
+        return render(request, 'music_app/create_artist_form.html', context)
+    
+    def deleteArtistAndProfile(request, pk):
+        artist = Artist.objects.get(pk=pk)
+        profile = Profile.objects.get(artist=artist)
+        artist_form = ArtistForm(instance=artist)
+        
+        if request.method == 'POST':
+            profile.delete() # I chose to delete the profile becasue it has the relationship set up to cascade delete the artist too
+            return redirect('index')
+
+        context = {'artist_form': artist_form, 'artist': artist, 'profile': profile}
+        return render(request, 'music_app/delete_artist_form.html', context)
+    
     def displayArtists(request):
         list_of_artists = Artist.objects.all()
         print('list of artists', list_of_artists)
         return render(request, 'music_app/artist_list.html', context={'list_of_artists': list_of_artists})
     
-class ArtistDetailView(generic.DetailView):
-    model = Artist
     def artistDetail(request, pk):
         artist = Artist.objects.get(pk=pk)
         print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
         return render(request, 'music_app/artist_detail.html', context={'artist': artist})
     
-class ProfileDetailView(generic.DetailView):
+class ProfileOperations(generic.DetailView):
     model = Profile
     def profileDetail(request, pk):
         try: 
@@ -42,7 +68,27 @@ class ProfileDetailView(generic.DetailView):
         
         return render(request, 'music_app/profile_detail.html', context={'profile': profile, 'artist': artist, 'list_of_projects': list_of_projects})
 
-class ProjectDetailView(generic.DetailView):
+    def editProfile(request, pk):
+        artist = Artist.objects.get(pk=pk)
+        profile = artist.profile  
+        form = EditProfileForm(instance=profile) #request.GET
+        
+        if request.method == 'POST':
+            profile_data = request.POST.copy()
+            profile_data['artist'] = artist.id
+            form = EditProfileForm(profile_data, instance=profile)
+            if form.is_valid():
+                profile = form.save(commit=False)
+                profile.artist = artist
+                
+                profile.save()
+                #return redirect('profile-detail', pk) # either way works 
+                return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
+            
+        context = {'form': form, 'profile': profile, 'artist': artist}
+        return render(request, 'music_app/profile_form.html', context)
+
+class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
     model = Project
     def projectDetail(request, pk):
         try:
@@ -55,27 +101,6 @@ class ProjectDetailView(generic.DetailView):
         
         return render(request, 'music_app/project_detail.html', context={'project': project, 'artist': artist, 'profile': profile})
 
-def editProfile(request, pk):
-    artist = Artist.objects.get(pk=pk)
-    profile = artist.profile  
-    form = EditProfileForm(instance=profile) #request.GET
-    
-    if request.method == 'POST':
-        profile_data = request.POST.copy()
-        profile_data['artist'] = artist.id
-        form = EditProfileForm(profile_data, instance=profile)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.artist = artist
-            
-            profile.save()
-            #return redirect('profile-detail', pk) # either way works 
-            return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
-        
-    context = {'form': form, 'profile': profile, 'artist': artist}
-    return render(request, 'music_app/profile_form.html', context)
-
-class ProjectOperations(generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
     def updateProject(request, pk):
         project = Project.objects.get(pk=pk)
         profile = Profile.objects.get(project=project)
@@ -129,45 +154,24 @@ class ProjectOperations(generic.edit.UpdateView, generic.edit.DeleteView, generi
             
         context = {'form': form, 'profile': profile, 'artist': artist}
         return render(request, 'music_app/create_project_form.html', context)
-
-class CreationOperations(generic.edit.CreateView):
     
-    def createArtistAndProfile(request):
+class UserOperations(generic.edit.CreateView):
+    model = User
+    def createUser(request):
+        user_form = UserCreationForm()
         artist_form = ArtistForm()
         profile_form = EditProfileForm()
         
-        profile = Profile.objects.create()
-        artist = Artist.objects.create(profile=profile)
-        
         if request.method == 'POST':
-            if artist_form.is_valid():
-                artist = artist_form.save(commit=False)
+            user_form = UserCreationForm(request.POST)
+            if user_form.is_valid():
                 
-                profile_form.title = (f"{artist_form.name}'s Profile")
-                profile_form.about = (f"This is a new profile for {artist_form.name}")
-                profile_form.contact_email = artist_form.email
-                profile_form.is_public = True
-                artist_form.profile_id = profile_form.id
-                profile = profile_form.save(commit=False)
-                
-                return redirect('music_app/artist_detail.html', artist_form.id)
-        
-        context = {'artist_form': artist_form, 'profile_form': profile_form, 'profile': profile, 'artist': artist}
-        return render(request, 'music_app/create_artist_form.html', context)
-    
-        
-    # def createUser(request):
-    #     user_form = UserCreationForm()
-        
-    #     if request.method == 'POST':
-    #         user_form = UserCreationForm(request.POST)
-    #         if user_form.is_valid():
-    #             createArtistAndProfile()
+                #createArtistAndProfile()
                     
-    #                 # create a new artist for user
-    #                 # create new profile for artist
-    #         user_form.save()
-    #         return redirect('login')
+                    # create a new artist for user
+                    # create new profile for artist
+                user_form.save()
+            return redirect('login')
             
-    #     context = {'form': user_form}
-    #     return render(request, 'music_app/create_user_form.html', context)
+        context = {'form': user_form}
+        return render(request, 'music_app/create_user_form.html', context)
