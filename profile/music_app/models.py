@@ -33,7 +33,15 @@ class Artist(models.Model):
     email = models.EmailField("artist email", max_length=50)
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
     instrument = models.CharField(max_length=200, blank = False)
-    profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True) 
+    profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True, blank=True) 
+    
+    def save(self, *args, **kwargs):
+        self.profile = Profile.objects.create(title=(f"{self.name}'s Profile"), about = (f"This is a new profile for {self.name}"), is_public=True, contact_email=self.email)
+        return super(Artist, self).save(*args, **kwargs)
+    
+    def delete(self):
+        self.profile.delete()
+        return super(Artist, self).delete()
     
     def __str__(self):
         return self.name
