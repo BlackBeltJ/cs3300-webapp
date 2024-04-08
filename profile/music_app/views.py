@@ -8,7 +8,7 @@ from .forms import *
 
 def index(request):
     # Render index.html
-    artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_active=True)
+    artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_public=True)
     print('active profile query set', artist_active_profiles)
     #context is dictionary that is passed as a template ("variable") to the html file
     return render(request, 'music_app/index.html', {'artist_active_profiles': artist_active_profiles})

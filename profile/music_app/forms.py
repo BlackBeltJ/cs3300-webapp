@@ -9,7 +9,7 @@ from .models import Project, Profile, Artist
 class EditProfileForm(ModelForm): #forms.Form 
     class Meta:
         model = Profile
-        fields = ['title', 'is_active', 'about', 'contact_email']
+        fields = ['title', 'is_public', 'about', 'contact_email']
     
         #title = forms.CharField(max_length=200, required=True)
         #is_active = forms.BooleanField(required=False)

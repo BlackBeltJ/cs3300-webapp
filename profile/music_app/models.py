@@ -4,7 +4,7 @@ from django.urls import reverse
 # Create your models here.
 class Profile(models.Model):  
     title = models.CharField(max_length=200)
-    is_active = models.BooleanField(default=False, blank = False)
+    is_public = models.BooleanField(default=False, blank = False)
     about = models.TextField("About (Optional)", blank=True)
     contact_email = models.EmailField("Contact Email", max_length=50)
    # student = models.OneToOneField(Student, null=True, on_delete=models.CASCADE, unique=True)
