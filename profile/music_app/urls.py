@@ -20,8 +20,10 @@ urlpatterns = [
     path('artist/?/profile/project/<int:pk>', views.ProjectDetailView.projectDetail, name='project-detail'),
     path('artist/<int:pk>/profile/edit', views.editProfile, name='edit-profile'),
     #<uuid:pk> is a path converter that matches a UUID
-    path('artist/<int:pk>/profile/create_project', views.createProject, name='create-project'),
-    path('artist/?/profile/update_project/<int:pk>', views.updateProject, name='update-project'),
-    path('artist/?/profile/delete_project/<int:pk>', views.deleteProject, name='delete-project'),
+    path('artist/<int:pk>/profile/create_project', views.ProjectOperations.createProject, name='create-project'),
+    path('artist/?/profile/update_project/<int:pk>', views.ProjectOperations.updateProject, name='update-project'),
+    path('artist/?/profile/delete_project/<int:pk>', views.ProjectOperations.deleteProject, name='delete-project'),
 
+    path('create_artist/', views.CreationOperations.createArtistAndProfile, name='create-artist'),
+    #path('register/', views.register, name='register'),
 ]

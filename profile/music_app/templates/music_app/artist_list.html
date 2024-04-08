@@ -10,6 +10,7 @@
                 </li>
             {% endfor %}
         </ul>
+        <a href="{% url 'create-artist' %}" class="btn btn-success">Create a new artist</a>
     {% else %}
         <p>There are no artists registered.</p>
     {% endif %}

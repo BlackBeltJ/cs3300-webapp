@@ -2,13 +2,13 @@
 
 {% block content %}
 
-<h1>Edit {{ artist.name }}'s Portfolio:</h1>
-<h4>Current Portfolio Information:</h4>
-<p><strong>Title:</strong> {{ portfolio.title }}</p>
-<p><strong>About:</strong> {{ portfolio.about }}</p>
-<p><strong>contact email:</strong> {{ portfolio.contact_email }}</p>
+<h1>Edit {{ artist.name }}'s Profile:</h1>
+<h4>Current Profile Information:</h4>
+<p><strong>Title:</strong> {{ profile.title }}</p>
+<p><strong>About:</strong> {{ profile.about }}</p>
+<p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 
-<h4>Update Portfolio Information:</h4>
+<h4>Update Profile Information:</h4>
   <form action="" method="POST">
     {% csrf_token %}
     <table>

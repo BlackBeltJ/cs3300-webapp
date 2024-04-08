@@ -16,7 +16,28 @@ class EditProfileForm(ModelForm): #forms.Form
         #about = forms.CharField(widget=forms.Textarea, required=True)
         #contact_email = forms.EmailField(required=True)
 
+class ArtistForm(ModelForm):
+    class Meta:
+        model = Artist
+        fields = ['name', 'email', 'genre', 'instrument']
+
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
         fields = ['title', 'description']
+
+# class UserCreationForm(ModelForm):
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'password1', 'password2']
+#         widgets = {
+#             'password1': forms.PasswordInput(),
+#             'password2': forms.PasswordInput()
+#         }
+    
+#     def save(self, commit=True):
+#         user = super(UserCreationForm, self).save(commit=False)
+#         user.email = self.cleaned_data['email']
+#         if commit:
+#             user.save()
+#         return user
