@@ -203,33 +203,33 @@ class ArtistAuth(generic.DetailView):
         return render(request, 'registration/logged_out.html')
     
     def registerPage(request):
-        user_data = CreateUserForm()
+        user_form = CreateUserForm()
         artist_form = ArtistForm()
-        profile_form = ProfileForm()
         
         if request.method == 'POST':
-            user_data = CreateUserForm(request.POST)
+            user_form = CreateUserForm(request.POST)
             #user_data = request.POST.copy()
             #user_form = CreateUserForm(user_data)
             
-            artist_data = ArtistForm(request.POST)
+            artist_form = ArtistForm(request.POST)
             #artist_form = request.POST.copy()
             #artist_form = ArtistForm(artist_data)
             
-            if user_data.is_valid() & artist_data.is_valid():
-                user = user_data.save(commit=False)
-                username = user_data.cleaned_data.get('username')
+            if user_form.is_valid() and artist_form.is_valid():
+                user = user_form.save()
+                user.save()
                 artist = artist_form.save(commit=False)
-                
+                artist.user = user
+                artist.save()
+                username = user_form.cleaned_data.get('username')
                 #group = Group.objects.get(name='artist_role')
                 #user.groups.add(group)
-                artist.save()
-                user.save()
-                
+                print(f'user detail -> username: {user.username}, email: {user.email}')
+                print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, instrument: {artist.instrument}, profile: {artist.profile.title}')
                 messages.success(request, 'Account was created for ' + username)
                 return redirect('artist-detail', artist.id)
             
-        context = {'user_form': user_data, 'artist_form': artist_form, 'profile_form': profile_form}
+        context = {'user_form': user_form, 'artist_form': artist_form}
         return render(request, 'registration/register.html', context)
 
 # class UserOperations(generic.edit.CreateView):
