@@ -46,6 +46,7 @@ class Artist(models.Model):
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
     instrument = models.CharField(max_length=200, blank = False)
     profile = models.OneToOneField(Profile, null=True, on_delete=models.CASCADE, unique=True, blank=True) 
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE, unique=True, blank=True)
     
     def save(self, *args, **kwargs):
         self.profile = Profile.objects.create(title=(f"{self.name}'s Profile"), about = (f"This is a new profile for {self.name}"), is_public=True, contact_email=self.email)
@@ -80,23 +81,23 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
-class User(models.Model):
-    username = models.CharField(max_length=200)
-    # email = models.EmailField("user's email", max_length=50)
-    # password1 = models.CharField("password", max_length=200, default="change this")
-    # password2 = models.CharField("confirm password", max_length=200, default="change this")
-    groups = models.ManyToManyField(Group, related_name='users', related_query_name='user')
-    artist = models.OneToOneField(Artist, null=True, on_delete=models.CASCADE, unique=True) 
+# class User(models.Model):
+#     username = models.CharField(max_length=200)
+#     # email = models.EmailField("user's email", max_length=50)
+#     # password1 = models.CharField("password", max_length=200, default="change this")
+#     # password2 = models.CharField("confirm password", max_length=200, default="change this")
+#     groups = models.ManyToManyField(Group, related_name='users', related_query_name='user')
+#     artist = models.OneToOneField(Artist, null=True, on_delete=models.CASCADE, unique=True) 
     
-    def save(self, *args, **kwargs):
-        self.artist = Artist.objects.create(title=(f"New Profile"), about = (f"This is a new profile"), email=self.email)
-        return super(Artist, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.artist = Artist.objects.create(title=(f"New Profile"), about = (f"This is a new profile"), email=self.email)
+#         return super(Artist, self).save(*args, **kwargs)
     
-    def delete(self, *args, **kwargs):
-        obj = Profile.objects.select_related('profile' == self)
-        obj.delete()
-        self.artist.delete()
-        return super(Artist, self).delete(*args, **kwargs)
+#     def delete(self, *args, **kwargs):
+#         obj = Profile.objects.select_related('profile' == self)
+#         obj.delete()
+#         self.artist.delete()
+#         return super(Artist, self).delete(*args, **kwargs)
     
-    def __str__(self):
-        return self.username
+#     def __str__(self):
+#         return self.username

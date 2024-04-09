@@ -27,6 +27,7 @@ class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+        #fields = ['username', 'groups', 'artist']
         # widgets = {
         #     'password1': forms.PasswordInput(),
         #     'password2': forms.PasswordInput()

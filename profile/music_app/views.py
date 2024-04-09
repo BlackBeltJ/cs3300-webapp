@@ -208,22 +208,22 @@ class ArtistAuth(generic.DetailView):
         profile_form = ProfileForm()
         
         if request.method == 'POST':
-            user_data = CreateUserForm(request.POST)
-            user_form = ArtistForm(user_data)
+            user_data = request.POST.copy() #CreateUserForm(request.POST)
+            user_form = CreateUserForm(user_data)
             #form = request.POST.copy()
-            if user_data.is_valid():
-                user = user_data.save(commit=False)
-                username = user_data.cleaned_data.get('username')
+            if user_form.is_valid():
+                user = user_form.save(commit=False)
+                username = user_form.cleaned_data.get('username')
                 group = Group.objects.get(name='artist_role')
-                user.groups.add(group)
-                artist = Artist.objects.create(user=user,)
+                #user.groups.add(group)
+                #artist = Artist.objects.create(user=user,)
                 #profile = Profile.objects.create()
                 #artist.profile = profile
-                artist.save()
-                user_form.save()
+                #artist.save()
+                user.save()
                 
                 messages.success(request, 'Account was created for ' + username)
-                return redirect('login')
+                return redirect('create-artist', user.id)
             
         context = {'form': user_data}
         return render(request, 'registration/register.html', context)
