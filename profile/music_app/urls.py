@@ -12,9 +12,8 @@ urlpatterns = [
     #<uuid:pk> is a path converter that matches a UUID
     path('', views.index, name='index'), # default view, home page
     
-    # login and logout
-    #path('login/', views.ArtistAuth.login, name='login'),
-    #path('/accounts/logout/', views.ArtistAuth.logged_outPage, name='logout'),
+    # register
+    path('register/', views.ArtistAuth.registerPage, name='register-page'),
     
     # artist operations (display, create, edit, delete, etc)
     path('artists/', views.ArtistOperations.displayArtists, name='artists'),
@@ -48,5 +47,7 @@ urlpatterns = [
     #accounts/ reset/<uidb64>/<token>/ [name='password_reset_confirm']
     #accounts/ reset/done/ [name='password_reset_complete']
     
+    #path('login/', views.ArtistAuth.login, name='login'),
+    #path('/accounts/logout/', views.ArtistAuth.logged_outPage, name='logout'),
     
 ]

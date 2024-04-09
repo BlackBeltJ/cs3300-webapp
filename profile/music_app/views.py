@@ -5,6 +5,8 @@ from django.http import Http404
 from django.views import generic
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .forms import *
 from .decorators import *
@@ -48,19 +50,25 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         context = {'artist_form': artist_form, 'artist': artist, 'profile': profile}
         return render(request, 'music_app/delete_artist_form.html', context)
     
+    @login_required
     def displayArtists(request):
         list_of_artists = Artist.objects.all()
         print('list of artists', list_of_artists)
         return render(request, 'music_app/artist_list.html', context={'list_of_artists': list_of_artists})
     
+    @login_required
     def artistDetail(request, pk):
         artist = Artist.objects.get(pk=pk)
         print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
         return render(request, 'music_app/artist_detail.html', context={'artist': artist})
     
-    #@login_required(login_url='login')
-    @allowed_users(allowed_roles=['artist'])
-    def userPage(request):
+    @login_required
+    #@allowed_users(allowed_roles=['artist'])
+    def userPage(request, pk):
+        artist = Artist.objects.get(pk=pk)
+        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+        return render(request, 'music_app/artist_detail.html', context={'artist': artist})
+    
         artist = request.user.artist
         form = ArtistForm(instance=artist)
         print('artist', artist)
@@ -74,8 +82,10 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         context = {'form': form, 'profile': profile}
         return render(request, 'music_app/artist_detail.html', context)
     
-class ProfileOperations(generic.DetailView):
+class ProfileOperations(LoginRequiredMixin, generic.DetailView):
     model = Profile
+    
+    @login_required
     def profileDetail(request, pk):
         try: 
             artist = Artist.objects.get(pk=pk)
@@ -89,6 +99,7 @@ class ProfileOperations(generic.DetailView):
         
         return render(request, 'music_app/profile_detail.html', context={'profile': profile, 'artist': artist, 'list_of_projects': list_of_projects})
 
+    @login_required
     def editProfile(request, pk):
         artist = Artist.objects.get(pk=pk)
         print(f"artist id: {artist.id}, artist profile: {artist.profile}")
@@ -110,8 +121,10 @@ class ProfileOperations(generic.DetailView):
         context = {'form': form, 'profile': profile, 'artist': artist}
         return render(request, 'music_app/profile_form.html', context)
 
-class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
+class ProjectOperations(LoginRequiredMixin, generic.DetailView, generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
     model = Project
+    
+    @login_required
     def projectDetail(request, pk):
         try:
             project = Project.objects.get(pk=pk)
@@ -123,6 +136,7 @@ class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edi
         
         return render(request, 'music_app/project_detail.html', context={'project': project, 'artist': artist, 'profile': profile})
 
+    @login_required
     def updateProject(request, pk):
         project = Project.objects.get(pk=pk)
         profile = Profile.objects.get(project=project)
@@ -143,6 +157,7 @@ class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edi
         context = {'form': form, 'project': project, 'profile': profile}
         return render(request, 'music_app/project_form.html', context)
 
+    @login_required
     def deleteProject(request, pk):
         project = Project.objects.get(pk=pk)
         profile = Profile.objects.get(project=project)
@@ -158,6 +173,7 @@ class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edi
         return render(request, 'music_app/delete_project_form.html', context)
 
     # Create a new project for a profile
+    @login_required
     def createProject(request, pk):
         form = ProjectForm()
         artist = Artist.objects.get(pk=pk)
@@ -187,26 +203,31 @@ class ArtistAuth(generic.DetailView):
         return render(request, 'registration/logged_out.html')
     
     def registerPage(request):
-        form = CreateArtistForm()
+        user_data = CreateUserForm()
+        artist_form = ArtistForm()
+        profile_form = ProfileForm()
         
         if request.method == 'POST':
-            form = CreateArtistForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                username = form.cleaned_data.get('username')
-                group = Group.objects.get(name='artist')
+            user_data = CreateUserForm(request.POST)
+            user_form = ArtistForm(user_data)
+            #form = request.POST.copy()
+            if user_data.is_valid():
+                user = user_data.save(commit=False)
+                username = user_data.cleaned_data.get('username')
+                group = Group.objects.get(name='artist_role')
                 user.groups.add(group)
                 artist = Artist.objects.create(user=user,)
                 #profile = Profile.objects.create()
                 #artist.profile = profile
                 artist.save()
+                user_form.save()
                 
                 messages.success(request, 'Account was created for ' + username)
                 return redirect('login')
             
-        context = {'form': form}
+        context = {'form': user_data}
         return render(request, 'registration/register.html', context)
-    
+
 # class UserOperations(generic.edit.CreateView):
 #     model = User
 #     def createUser(request):

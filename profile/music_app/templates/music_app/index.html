@@ -5,19 +5,23 @@
 {% block content %}
 <h1><strong>Artist Profiles</strong></h1>
 
+{% if user.is_authenticated %}
 <h3>List of artists with public profiles</h3>
 <div class="container">
     <ul class="list-group">
         {% for i in artist_active_profiles %}
-            <li class="list-group-item"><strong>Name: </strong>{{i.name}}
-                <a href="{{ i.get_absolute_url }}" class="btn btn-info">View Artist Details</a>
-                <p><strong>Profile:</strong>
-                    {{ i.profile.title }}
-                    <a href="{{ i.profile.get_absolute_url }}" class="btn btn-info">View Posts</a>
-                </p>
+        <li class="list-group-item"><strong>Name: </strong>{{i.name}}
+            <a href="{{ i.get_absolute_url }}" class="btn btn-info">View Artist Details</a>
+            <p><strong>Profile:</strong>
+                {{ i.profile.title }}
+                <a href="{{ i.profile.get_absolute_url }}" class="btn btn-info">View Posts</a>
+            </p>
         </li>
         {% endfor %}
     </ul> 
 </div>   
+{% else %}
+<p>Please login to view artist profiles</p>
+{% endif %}
 
 {% endblock %}
