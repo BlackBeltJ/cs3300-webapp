@@ -3,8 +3,11 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from django.http import Http404
 from django.views import generic
+from django.contrib import messages
+from django.contrib.auth.models import Group
 from .models import *
 from .forms import *
+from .decorators import *
 
 def index(request):
     artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_public=True)
@@ -54,6 +57,22 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         artist = Artist.objects.get(pk=pk)
         print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
         return render(request, 'music_app/artist_detail.html', context={'artist': artist})
+    
+    #@login_required(login_url='login')
+    @allowed_users(allowed_roles=['artist'])
+    def userPage(request):
+        artist = request.user.artist
+        form = ArtistForm(instance=artist)
+        print('artist', artist)
+        profile = artist.profile
+        print('profile', profile)
+        if request.method == 'POST':
+            form = ArtistForm(request.POST, request.FILES, instance=artist)
+            if form.is_valid():
+                form.save()
+                
+        context = {'form': form, 'profile': profile}
+        return render(request, 'music_app/artist_detail.html', context)
     
 class ProfileOperations(generic.DetailView):
     model = Profile
@@ -158,24 +177,53 @@ class ProjectOperations(generic.DetailView, generic.edit.UpdateView, generic.edi
             
         context = {'form': form, 'profile': profile, 'artist': artist}
         return render(request, 'music_app/create_project_form.html', context)
+
+class ArtistAuth(generic.DetailView):
+    model = Artist
+    def loginPage(request):
+        return render(request, 'music_app/login.html')
     
-class UserOperations(generic.edit.CreateView):
-    model = User
-    def createUser(request):
-        user_form = UserCreationForm()
-        artist_form = ArtistForm()
-        profile_form = ProfileForm()
+    def logoutPage(request):
+        return render(request, 'registration/logged_out.html')
+    
+    def registerPage(request):
+        form = CreateArtistForm()
         
         if request.method == 'POST':
-            user_form = UserCreationForm(request.POST)
-            if user_form.is_valid():
+            form = CreateArtistForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                username = form.cleaned_data.get('username')
+                group = Group.objects.get(name='artist')
+                user.groups.add(group)
+                artist = Artist.objects.create(user=user,)
+                #profile = Profile.objects.create()
+                #artist.profile = profile
+                artist.save()
                 
-                #createArtistAndProfile()
-                    
-                    # create a new artist for user
-                    # create new profile for artist
-                user_form.save()
-            return redirect('login')
+                messages.success(request, 'Account was created for ' + username)
+                return redirect('login')
             
-        context = {'form': user_form}
-        return render(request, 'music_app/create_user_form.html', context)
+        context = {'form': form}
+        return render(request, 'registration/register.html', context)
+    
+# class UserOperations(generic.edit.CreateView):
+#     model = User
+#     def createUser(request):
+#         user_form = UserCreationForm()
+#         artist_form = ArtistForm()
+#         profile_form = ProfileForm()
+        
+#         if request.method == 'POST':
+#             user_form = UserCreationForm(request.POST)
+#             if user_form.is_valid():
+                
+#                 #createArtistAndProfile()
+                    
+#                     # create a new artist for user
+#                     # create new profile for artist
+#                 user_form.save()
+#             return redirect('login')
+            
+#         context = {'form': user_form}
+#         return render(request, 'music_app/create_user_form.html', context)

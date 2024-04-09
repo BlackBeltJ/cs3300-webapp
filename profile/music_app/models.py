@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 #from django.db.models.query import ImageQuerySet
 
 # Create your models here.
@@ -31,6 +32,14 @@ class Artist(models.Model):
     ('Jazz', 'Jazz'),
     ('Instrumental', 'Instrumental')
     )
+    # used for validation 
+    #username = models.CharField(max_length=200, default="username here")
+    #password1 = models.CharField("password", max_length=200, default="change this")
+    #password2 = models.CharField("confirm password", max_length=200, default="change this")
+    
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)#, unique=True, blank=True)
+    
+    # other details
     name = models.CharField(max_length=200)
     email = models.EmailField("artist email", max_length=50)
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
@@ -70,6 +79,22 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
-class User(models.Model):
-    user_id = models.CharField(max_length=200)
-    favorite_song = models.CharField(max_length=200, blank = True)
+# class User(models.Model):
+#     username = models.CharField(max_length=200)
+#     email = models.EmailField("user's email", max_length=50)
+#     password1 = models.CharField("password", max_length=200, default="change this")
+#     password2 = models.CharField("confirm password", max_length=200, default="change this")
+#     artist = models.OneToOneField(Artist, null=True, on_delete=models.CASCADE, unique=True, blank=True) 
+    
+#     def save(self, *args, **kwargs):
+#         self.artist = Artist.objects.create(title=(f"New Profile"), about = (f"This is a new profile"), email=self.email)
+#         return super(Artist, self).save(*args, **kwargs)
+    
+#     def delete(self, *args, **kwargs):
+#         obj = Profile.objects.select_related('profile' == self)
+#         obj.delete()
+#         self.artist.delete()
+#         return super(Artist, self).delete(*args, **kwargs)
+    
+#     def __str__(self):
+#         return self.username

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from .models import *
 
@@ -13,12 +13,13 @@ urlpatterns = [
     path('', views.index, name='index'), # default view, home page
     
     # login and logout
-    path('login/', views.index, name='login'),
-    path('logout/', views.index, name='logout'),
+    #path('login/', views.ArtistAuth.login, name='login'),
+    #path('/accounts/logout/', views.ArtistAuth.logged_outPage, name='logout'),
     
     # artist operations (display, create, edit, delete, etc)
     path('artists/', views.ArtistOperations.displayArtists, name='artists'),
-    path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
+    #path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
+    path('artists/<int:pk>', views.ArtistOperations.userPage, name='artist-detail'),
     path('create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
     path('delete_artist/<int:pk>', views.ArtistOperations.deleteArtistAndProfile, name='delete-artist'),
     
@@ -32,5 +33,20 @@ urlpatterns = [
     path('artist/?/profile/update_project/<int:pk>', views.ProjectOperations.updateProject, name='update-project'),
     path('artist/?/profile/delete_project/<int:pk>', views.ProjectOperations.deleteProject, name='delete-project'),
 
-    #path('register/', views.register, name='register'),
+    # artist accounts
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', views.ArtistAuth.registerPage, name='register-page'),
+    path('accounts/login/', views.ArtistAuth.loginPage, name='login-page'),
+    path('accounts/logout/', views.ArtistAuth.logoutPage, name='logout-page'),
+    #the following include automatically maps the following urls
+    #accounts/ login/ [name='login']
+    #accounts/ logout/ [name='logout']
+    #accounts/ password_change/ [name='password_change']
+    #accounts/ password_change/done/ [name='password_change_done']
+    #accounts/ password_reset/ [name='password_reset']
+    #accounts/ password_reset/done/ [name='password_reset_done']
+    #accounts/ reset/<uidb64>/<token>/ [name='password_reset_confirm']
+    #accounts/ reset/done/ [name='password_reset_complete']
+    
+    
 ]

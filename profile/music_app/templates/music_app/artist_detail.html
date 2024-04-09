@@ -2,15 +2,15 @@
 
 {% block content %}
     <h1>Artist Detail</h1>
-
     <p><strong>artist name:</strong> {{ artist.name }}</p>
     <p><strong>email:</strong> {{ artist.email }}</p>
     <p><strong>artist genre:</strong> <a href="https://www.musicgenreslist.com/">{{ artist.genre }}</a></p>
     <p><strong>artist profile:</strong>
         <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
     </p>
-
+    <!-- will need if loop here for validation -->
     <div>
+        <a href="#" class="btn btn-info"><strong>Edit Artist</a></strong> <!-- edit this link -->
         <a href="{% url 'delete-artist' artist.id %}" class="btn btn-danger"><strong>Delete Artist</a></strong>
     </div>
 {% endblock %}
