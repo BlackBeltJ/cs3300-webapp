@@ -9,9 +9,14 @@ from django.shortcuts import redirect
 #             return redirect('login')
 #     return wrapper_func
 
-def allowed_users(allowed_roles=[]):
+# create a decorator for pass in list of roles
+def allowed_users(allowed_roles=['admin_role',]):
+    # create decorator and pass in view function
+    # decorator is placed above the view function
     def decorator(view_func):
+        # create wrapper function to check if user is in allowed_roles
         def wrapper_func(request, *args, **kwargs):
+            # debug and print allowed roles
             print('role', allowed_roles)
             group = None
             if request.user.groups.exists():
@@ -23,3 +28,13 @@ def allowed_users(allowed_roles=[]):
         return wrapper_func
     return decorator
 
+def user_is_owner(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        print('args', args)
+        print('kwargs', kwargs)
+        artist = request.artist
+        if request.user == args[0].artist:
+            return view_func(request, *args, **kwargs)
+        else:
+            return HttpResponse('You are not authorized to view this page')
+    return wrapper_func

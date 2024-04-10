@@ -3,8 +3,10 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from django.http import Http404
 from django.views import generic
+#from django.views import View
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
@@ -17,11 +19,16 @@ def index(request):
     #context is dictionary that is passed as a template ("variable") to the html file
     return render(request, 'music_app/index.html', {'artist_active_profiles': artist_active_profiles})
 
+def get_current_user(request):
+    return request.user
+
 #def redirect(request, context):
 #    return render(request)
     
-class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.CreateView, generic.edit.DeleteView):
+class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView, generic.edit.CreateView, generic.edit.DeleteView):
     model = Artist
+    
+    @login_required
     def createArtistAndProfile(request):
         artist_form = ArtistForm()
         profile_form = ProfileForm()
@@ -38,6 +45,7 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         context = {'artist_form': artist_form, 'profile_form': profile_form}
         return render(request, 'music_app/create_artist_form.html', context)
     
+    @login_required
     def deleteArtistAndProfile(request, pk):
         artist = Artist.objects.get(pk=pk)
         profile = Profile.objects.get(artist=artist)
@@ -51,6 +59,7 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         return render(request, 'music_app/delete_artist_form.html', context)
     
     @login_required
+    @allowed_users(allowed_roles=['artist_role'])
     def displayArtists(request):
         list_of_artists = Artist.objects.all()
         print('list of artists', list_of_artists)
@@ -62,26 +71,22 @@ class ArtistOperations(generic.ListView, generic.DetailView, generic.edit.Create
         print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
         return render(request, 'music_app/artist_detail.html', context={'artist': artist})
     
-    @login_required
-    #@allowed_users(allowed_roles=['artist'])
+    ## decorators and permissions
+    @login_required(login_url='login')
+    @allowed_users(allowed_roles=['artist_role'])
+    #@user_is_owner(get_current_user())
     def userPage(request, pk):
         artist = Artist.objects.get(pk=pk)
-        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
-        return render(request, 'music_app/artist_detail.html', context={'artist': artist})
-    
-        artist = request.user.artist
-        form = ArtistForm(instance=artist)
-        print('artist', artist)
-        profile = artist.profile
-        print('profile', profile)
-        if request.method == 'POST':
-            form = ArtistForm(request.POST, request.FILES, instance=artist)
-            if form.is_valid():
-                form.save()
-                
-        context = {'form': form, 'profile': profile}
-        return render(request, 'music_app/artist_detail.html', context)
-    
+        if (artist.user.id == get_current_user(request).id):
+            print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+            context={'artist': artist}
+            return render(request, 'music_app/artist_detail.html', context)
+        else:
+            raise Http404('You are not authorized to view this page')
+            # redirect to list of artists
+            #return render(request, 'music_app/artist_detail.html', context)
+        
+        
 class ProfileOperations(LoginRequiredMixin, generic.DetailView):
     model = Profile
     
@@ -222,8 +227,9 @@ class ArtistAuth(generic.DetailView):
                 artist.user = user
                 artist.save()
                 username = user_form.cleaned_data.get('username')
-                #group = Group.objects.get(name='artist_role')
-                #user.groups.add(group)
+                group = Group.objects.get(name='artist_role')
+                user.groups.add(group)
+                artist.groups.add(group)
                 print(f'user detail -> username: {user.username}, email: {user.email}')
                 print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, instrument: {artist.instrument}, profile: {artist.profile.title}')
                 messages.success(request, 'Account was created for ' + username)
