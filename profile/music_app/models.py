@@ -33,14 +33,6 @@ class Artist(models.Model):
     ('Jazz', 'Jazz'),
     ('Instrumental', 'Instrumental')
     )
-    # used for validation 
-    #username = models.CharField(max_length=200, default="username here")
-    #password1 = models.CharField("password", max_length=200, default="change this")
-    #password2 = models.CharField("confirm password", max_length=200, default="change this")
-    
-    #user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)#, unique=True, blank=True)
-    
-    # other details
     name = models.CharField(max_length=200)
     email = models.EmailField("artist email", max_length=50)
     genre = models.CharField(max_length=200, choices=GENRE, blank = False)
@@ -61,6 +53,26 @@ class Artist(models.Model):
     def __str__(self):
         return self.name
 
+    # def can_edit(self, user):
+    #     return user == self.user or user.has_perm('music_app.can_edit_artist')
+
+    # def can_view(self, user):
+    #     return user == self.user or user.has_perm('music_app.can_view_artist')
+    
+    # def can_delete(self, user): 
+    #     return user == self.user or user.has_perm('music_app.can_delete_artist')
+    
+    # def can_create(self, user):
+    #     return user == self.user or user.has_perm('music_app.can_create_artist')
+
+    # class Meta:
+    #     permissions = [
+    #         ("can_view_artist", "Can view artist"),
+    #         ("can_edit_artist", "Can edit artist"),
+    #         ("can_delete_artist", "Can delete artist"),
+    #         ("can_create_artist", "Can create artist"),
+    #     ]
+    
     #Returns the URL to access a particular instance of MyModelName.
     #if you define this method then Django will automatically
     # add a "View on Site" button to the model's record editing screens in the Admin site

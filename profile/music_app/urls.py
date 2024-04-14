@@ -17,9 +17,8 @@ urlpatterns = [
     
     # artist operations (display, create, edit, delete, etc)
     path('artists/', views.ArtistOperations.displayArtists, name='artists'),
-    #path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
-    path('artists/<int:pk>', views.ArtistOperations.userPage, name='artist-detail'),
-    path('accounts/create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
+    path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
+    #path('accounts/create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
     path('delete_artist/<int:pk>', views.ArtistOperations.deleteArtistAndProfile, name='delete-artist'),
     
     # profile operations (display, create, edit, delete, etc)

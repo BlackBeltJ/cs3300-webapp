@@ -6,6 +6,7 @@
 <h1><strong>Artist Profiles</strong></h1>
 
 {% if user.is_authenticated %}
+{% if artist_active_profiles%}
 <h3>List of artists with public profiles</h3>
 <div class="container">
     <ul class="list-group">
@@ -19,7 +20,10 @@
         </li>
         {% endfor %}
     </ul> 
-</div>   
+</div>
+{% else %}
+<p>No public artist profiles</p>
+{% endif %}
 {% else %}
 <p>Please login to view artist profiles</p>
 {% endif %}

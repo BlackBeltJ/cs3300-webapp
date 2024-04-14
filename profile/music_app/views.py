@@ -20,7 +20,8 @@ def index(request):
     return render(request, 'music_app/index.html', {'artist_active_profiles': artist_active_profiles})
 
 def get_current_user(request):
-    return request.user
+    current_user = request.user
+    return current_user
 
 #def redirect(request, context):
 #    return render(request)
@@ -28,24 +29,25 @@ def get_current_user(request):
 class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView, generic.edit.CreateView, generic.edit.DeleteView):
     model = Artist
     
-    @login_required
-    def createArtistAndProfile(request):
-        artist_form = ArtistForm()
-        profile_form = ProfileForm()
+    # @login_required
+    # def createArtistAndProfile(request):
+    #     artist_form = ArtistForm()
+    #     profile_form = ProfileForm()
         
-        if request.method == 'POST':
-            artist_data = request.POST.copy()
-            artist_form = ArtistForm(artist_data)
-            if artist_form.is_valid():
-                artist = artist_form.save(commit=False)
-                artist.save()
-                context = {'artist_form': artist_form, 'profile_form': profile_form, 'artist': artist}
-                return redirect('artist-detail', artist.id)
+    #     if request.method == 'POST':
+    #         artist_data = request.POST.copy()
+    #         artist_form = ArtistForm(artist_data)
+    #         if artist_form.is_valid():
+    #             artist = artist_form.save(commit=False)
+    #             artist.save()
+    #             context = {'artist_form': artist_form, 'profile_form': profile_form, 'artist': artist}
+    #             return redirect('artist-detail', artist.id)
         
-        context = {'artist_form': artist_form, 'profile_form': profile_form}
-        return render(request, 'music_app/create_artist_form.html', context)
+    #     context = {'artist_form': artist_form, 'profile_form': profile_form}
+    #     return render(request, 'music_app/create_artist_form.html', context)
     
     @login_required
+    @user_is_owner()
     def deleteArtistAndProfile(request, pk):
         artist = Artist.objects.get(pk=pk)
         profile = Profile.objects.get(artist=artist)
@@ -59,33 +61,31 @@ class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView,
         return render(request, 'music_app/delete_artist_form.html', context)
     
     @login_required
-    @allowed_users(allowed_roles=['artist_role'])
+    #@allowed_users(allowed_roles=['artist_role'])
     def displayArtists(request):
         list_of_artists = Artist.objects.all()
         print('list of artists', list_of_artists)
         return render(request, 'music_app/artist_list.html', context={'list_of_artists': list_of_artists})
     
-    @login_required
-    def artistDetail(request, pk):
-        artist = Artist.objects.get(pk=pk)
-        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
-        return render(request, 'music_app/artist_detail.html', context={'artist': artist})
-    
     ## decorators and permissions
     @login_required(login_url='login')
-    @allowed_users(allowed_roles=['artist_role'])
-    #@user_is_owner(get_current_user())
-    def userPage(request, pk):
+    #@allowed_users(allowed_roles=['artist_role'])
+    def artistDetail(request, pk):
         artist = Artist.objects.get(pk=pk)
-        if (artist.user.id == get_current_user(request).id):
-            print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
-            context={'artist': artist}
-            return render(request, 'music_app/artist_detail.html', context)
-        else:
-            raise Http404('You are not authorized to view this page')
-            # redirect to list of artists
-            #return render(request, 'music_app/artist_detail.html', context)
+        # if artist.has_perm('can_view_artist', get_current_user(request)):
+        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+        context={'artist': artist}
+        return render(request, 'music_app/artist_detail.html', context)
+
+        # redirect to list of artists
+        #return render(request, 'music_app/artist_detail.html', context)
         
+        # if (artist.user.id == request.user.id):
+        #     print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+        #     context={'artist': artist}
+        #     return render(request, 'music_app/artist_detail.html', context)
+        # else:
+        #     raise Http404('You are not authorized to view this page')
         
 class ProfileOperations(LoginRequiredMixin, generic.DetailView):
     model = Profile
@@ -105,6 +105,7 @@ class ProfileOperations(LoginRequiredMixin, generic.DetailView):
         return render(request, 'music_app/profile_detail.html', context={'profile': profile, 'artist': artist, 'list_of_projects': list_of_projects})
 
     @login_required
+    @user_is_owner()
     def editProfile(request, pk):
         artist = Artist.objects.get(pk=pk)
         print(f"artist id: {artist.id}, artist profile: {artist.profile}")
@@ -142,6 +143,7 @@ class ProjectOperations(LoginRequiredMixin, generic.DetailView, generic.edit.Upd
         return render(request, 'music_app/project_detail.html', context={'project': project, 'artist': artist, 'profile': profile})
 
     @login_required
+    @user_is_owner()
     def updateProject(request, pk):
         project = Project.objects.get(pk=pk)
         profile = Profile.objects.get(project=project)
@@ -163,6 +165,7 @@ class ProjectOperations(LoginRequiredMixin, generic.DetailView, generic.edit.Upd
         return render(request, 'music_app/project_form.html', context)
 
     @login_required
+    @user_is_owner()
     def deleteProject(request, pk):
         project = Project.objects.get(pk=pk)
         profile = Profile.objects.get(project=project)
@@ -179,6 +182,7 @@ class ProjectOperations(LoginRequiredMixin, generic.DetailView, generic.edit.Upd
 
     # Create a new project for a profile
     @login_required
+    @user_is_owner()
     def createProject(request, pk):
         form = ProjectForm()
         artist = Artist.objects.get(pk=pk)
@@ -229,7 +233,7 @@ class ArtistAuth(generic.DetailView):
                 username = user_form.cleaned_data.get('username')
                 group = Group.objects.get(name='artist_role')
                 user.groups.add(group)
-                artist.groups.add(group)
+                #artist.groups.add(group)
                 print(f'user detail -> username: {user.username}, email: {user.email}')
                 print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, instrument: {artist.instrument}, profile: {artist.profile.title}')
                 messages.success(request, 'Account was created for ' + username)
