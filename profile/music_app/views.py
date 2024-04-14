@@ -14,6 +14,7 @@ from .models import *
 from .forms import *
 from .decorators import *
 
+@login_required(login_url='login')
 def index(request):
     artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_public=True)
     print('active profile query set', artist_active_profiles)
@@ -55,7 +56,7 @@ class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView,
         artist_form = ArtistForm(instance=artist)
         
         if request.method == 'POST':
-            profile.delete() # I chose to delete the profile becasue it has the relationship set up to cascade delete the artist too
+            profile.delete() # I chose to delete the profile because it has the relationship set up to cascade delete the artist too
             return redirect('index')
 
         context = {'artist_form': artist_form, 'artist': artist, 'profile': profile}
