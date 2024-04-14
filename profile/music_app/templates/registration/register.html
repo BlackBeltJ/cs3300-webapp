@@ -1,0 +1,13 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+  <h2>Artist Registration</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ artist_form.as_p}}
+    <input type="submit" name="Register" />
+  </form>
+  {{form.errors}}
+{% endblock %}

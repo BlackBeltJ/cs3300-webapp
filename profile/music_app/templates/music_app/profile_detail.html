@@ -2,14 +2,12 @@
 
 {% block content %}
 <h1>{{ artist.name }}'s Profile:</h1>
-<a href="{% url 'edit-profile' artist.pk %}" class="btn btn-dark">Edit Profile</a>
+<a href="{% url 'edit-profile' artist.id %}" class="btn btn-info">Edit Profile</a>
 <br><br>
 <p><strong>Title:</strong> {{ profile.title }}</p>
 <p><strong>About:</strong> {{ profile.about }}</p>
 <p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 <br>
-<a href="{% url 'create-project' artist.pk %}" class="btn btn-dark">Create Post</a>
-<br><br>
 <h4>List of {{ artist.name }}'s posts</h4>
     {% if list_of_projects %}
         <div class="container">
@@ -27,8 +25,12 @@
                 {% endfor %}
             </ul>
         </div>
+        <br>
+        <a href="{% url 'create-project' artist.id %}" class="btn btn-success">Create Post</a>
+        <br>
     {% else %}
         <p>This portfolio has no posts.</p>
+        <a href="{% url 'create-project' artist.id %}" class="btn btn-success">Create a Post</a>
     {% endif %}
 
 {% endblock %}
