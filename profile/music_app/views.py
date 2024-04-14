@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import Http404
 from django.views import generic
@@ -79,13 +80,16 @@ class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView,
 
         # redirect to list of artists
         #return render(request, 'music_app/artist_detail.html', context)
-        
-        # if (artist.user.id == request.user.id):
-        #     print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
-        #     context={'artist': artist}
-        #     return render(request, 'music_app/artist_detail.html', context)
-        # else:
-        #     raise Http404('You are not authorized to view this page')
+    
+    @login_required(login_url='login')
+    def artistDetailFromBase(request, user_pk):
+        user_ = get_object_or_404(User, pk = user_pk)
+        artist = Artist.objects.get(user=user_)
+        # if artist.has_perm('can_view_artist', get_current_user(request)):
+        print(f'artist detail -> name: {artist.name}, email: {artist.email}, genre: {artist.genre}, profile: {artist.profile.title}')
+        context={'artist': artist}
+        return render(request, 'music_app/artist_detail.html', context)
+    
         
 class ProfileOperations(LoginRequiredMixin, generic.DetailView):
     model = Profile

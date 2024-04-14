@@ -17,6 +17,9 @@ urlpatterns = [
     
     # artist operations (display, create, edit, delete, etc)
     path('artists/', views.ArtistOperations.displayArtists, name='artists'),
+    # had to create another path for artist-detail-from-base because I can't access the artist from base_template
+    # I can only access the user from base_template.html so I made a new function that takes the user.id as user_pk and gets the artist from there
+    path('user/<int:user_pk>', views.ArtistOperations.artistDetailFromBase, name='artist-detail-from-base'),
     path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
     #path('accounts/create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
     path('delete_artist/<int:pk>', views.ArtistOperations.deleteArtistAndProfile, name='delete-artist'),
