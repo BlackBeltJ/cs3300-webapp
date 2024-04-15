@@ -8,6 +8,10 @@
 </li></p>
 <p><strong>Title:</strong> {{ project.title }}</p>
 <p><strong>Description:</strong> {{ project.description }}</p>
+<p><strong>Audio File (.mp3):</strong> {{ project.mp3_file }}</p>
+<p><audio controls id="player">
+    <source src="{{ project.mp3_file }}" type="audio/mp3">
+    Your browser does not support the audio element.
 <p><strong>Portfolio:</strong> 
     {{ project.portfolio }}
     <a href="{{ project.profile.get_absolute_url }}" class="btn btn-info">View</a>

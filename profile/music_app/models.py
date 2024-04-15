@@ -10,7 +10,7 @@ class Profile(models.Model):
     is_public = models.BooleanField(default=False, blank = False)
     about = models.TextField("About (Optional)", blank=True)
     contact_email = models.EmailField("Contact Email", max_length=50)
-   # student = models.OneToOneField(Student, null=True, on_delete=models.CASCADE, unique=True)
+    
 
     def __str__(self):
         return self.title
@@ -82,6 +82,9 @@ class Artist(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField("Project Description", blank = False)
+    
+    mp3_file = models.FileField(upload_to='static/audio/', blank=True, default = '/static/audio/default_audio.mp3', null=True)
+    
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
 
     def __str__(self):

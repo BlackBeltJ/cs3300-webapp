@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
-from .models import Project, Profile, Artist#, User
+from .models import Project, Profile, Artist #, User
 
   
 class ProfileForm(ModelForm): #forms.Form 
@@ -21,31 +21,10 @@ class ArtistForm(ModelForm):
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = ['title', 'description']
+        fields = '__all__'
+        exclude = ['profile']
         
 class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-        
-        #fields = ['username', 'groups', 'artist']
-        # widgets = {
-        #     'password1': forms.PasswordInput(),
-        #     'password2': forms.PasswordInput()
-        # }
-    
-    # def save(self, commit=True):
-    #     user = super(UserCreationForm, self).save(commit=False)
-    #     user.email = self.cleaned_data['email']
-    #     if commit:
-    #         user.save()
-    #     return user
-    
-#   class Meta:
-#       model = User
-#       fields = ['username', 'email', 'password1', 'password2']
-#       widgets = {
-#           'password1': forms.PasswordInput(),
-#           'password2': forms.PasswordInput()
-#       }
-
