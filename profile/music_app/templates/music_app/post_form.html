@@ -1,0 +1,20 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+
+<h1>Edit {{ post.title }} Post:</h1>
+<h4>Current Post Information:</h4>
+<p><strong>Title:</strong> {{ post.title }}</p>
+<p><strong>Description:</strong> {{ post.description }}</p>
+
+<h4>Update Post Information:</h4>
+  <form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <a href="{% url 'post-detail' post.id %}" class="btn btn-danger">Cancel</a>
+    <input type="submit" value="Save" class="btn btn-success">
+  </form>
+
+{% endblock %}

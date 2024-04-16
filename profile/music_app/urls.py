@@ -1,6 +1,8 @@
 from django.urls import path, include
 from . import views
 from .models import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     # path function defines a url pattern
@@ -28,11 +30,11 @@ urlpatterns = [
     path('artists/<int:pk>/profile', views.ProfileOperations.profileDetail, name='profile-detail'),
     path('artist/<int:pk>/profile/edit', views.ProfileOperations.editProfile, name='edit-profile'),
     
-    # project operations (display, create, edit, delete, etc)
-    path('artist/?/profile/project/<int:pk>', views.ProjectOperations.projectDetail, name='project-detail'),
-    path('artist/<int:pk>/profile/create_project', views.ProjectOperations.createProject, name='create-project'),
-    path('artist/?/profile/update_project/<int:pk>', views.ProjectOperations.updateProject, name='update-project'),
-    path('artist/?/profile/delete_project/<int:pk>', views.ProjectOperations.deleteProject, name='delete-project'),
+    # post operations (display, create, edit, delete, etc)
+    path('artist/?/profile/post/<int:pk>', views.PostOperations.postDetail, name='post-detail'),
+    path('artist/<int:pk>/profile/create_post', views.PostOperations.createPost, name='create-post'),
+    path('artist/<int:pk>/profile/update_post/<int:post_pk>', views.PostOperations.updatePost, name='update-post'),
+    path('artist/<int:pk>/profile/delete_post/<int:post_pk>', views.PostOperations.deletePost, name='delete-post'),
 
     # artist accounts
     path('accounts/', include('django.contrib.auth.urls')),
@@ -53,3 +55,5 @@ urlpatterns = [
     #path('/accounts/logout/', views.ArtistAuth.logged_outPage, name='logout'),
     
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

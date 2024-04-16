@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-#from django.db.models.query import ImageQuerySet
+import os 
 
 # Create your models here.
 class Profile(models.Model):  
@@ -11,7 +11,6 @@ class Profile(models.Model):
     about = models.TextField("About (Optional)", blank=True)
     contact_email = models.EmailField("Contact Email", max_length=50)
     
-
     def __str__(self):
         return self.title
 
@@ -52,26 +51,6 @@ class Artist(models.Model):
     
     def __str__(self):
         return self.name
-
-    # def can_edit(self, user):
-    #     return user == self.user or user.has_perm('music_app.can_edit_artist')
-
-    # def can_view(self, user):
-    #     return user == self.user or user.has_perm('music_app.can_view_artist')
-    
-    # def can_delete(self, user): 
-    #     return user == self.user or user.has_perm('music_app.can_delete_artist')
-    
-    # def can_create(self, user):
-    #     return user == self.user or user.has_perm('music_app.can_create_artist')
-
-    # class Meta:
-    #     permissions = [
-    #         ("can_view_artist", "Can view artist"),
-    #         ("can_edit_artist", "Can edit artist"),
-    #         ("can_delete_artist", "Can delete artist"),
-    #         ("can_create_artist", "Can create artist"),
-    #     ]
     
     #Returns the URL to access a particular instance of MyModelName.
     #if you define this method then Django will automatically
@@ -79,12 +58,10 @@ class Artist(models.Model):
     def get_absolute_url(self):
         return reverse('artist-detail', args=[str(self.id)])
 
-class Project(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField("Project Description", blank = False)
-    
-    mp3_file = models.FileField(upload_to='static/audio/', blank=True, default = '/static/audio/default_audio.mp3', null=True)
-    
+    description = models.TextField("Post Description", blank = False)
+    mp3_file = models.FileField(upload_to='audio/mp3/', blank=True, default = 'audio/mp3/default_audio.mp3')#null=True
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
@@ -94,7 +71,10 @@ class Project(models.Model):
     #if you define this method then Django will automatically
     # add a "View on Site" button to the model's record editing screens in the Admin site
     def get_absolute_url(self):
-        return reverse('project-detail', args=[str(self.id)])
+        return reverse('post-detail', args=[str(self.id)])
+    
+    def get_base_mp3_filename(self):
+        return os.path.basename(self.mp3_file.name)
 
 # class User(models.Model):
 #     username = models.CharField(max_length=200)

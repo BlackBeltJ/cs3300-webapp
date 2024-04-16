@@ -4,4 +4,4 @@ from .models import *
 
 admin.site.register(Artist)
 admin.site.register(Profile)
-admin.site.register(Project)
+admin.site.register(Post)

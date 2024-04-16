@@ -12,7 +12,7 @@ from .models import Artist
 #     return wrapper_func
 
 # create a decorator for pass in list of roles
-def allowed_users(allowed_roles=['admin_role',]):
+def allowed_users(allowed_roles=['admin_role','artist_role']):
     # create decorator and pass in view function
     # decorator is placed above the view function
     def decorator(view_func):
