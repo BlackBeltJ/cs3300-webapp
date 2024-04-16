@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
 from .models import *
 from .forms import *
 from .decorators import *
@@ -31,6 +32,7 @@ def get_current_user(request):
 class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView, generic.edit.CreateView, generic.edit.DeleteView):
     model = Artist
     
+    # quick function if I need to create an artist without a user
     # @login_required
     # def createArtistAndProfile(request):
     #     artist_form = ArtistForm()
@@ -102,12 +104,13 @@ class ProfileOperations(LoginRequiredMixin, generic.DetailView):
             print(f"artist id: {artist.id}, artist profile: {artist.profile}")
             profile = artist.profile
             # profile = Profile.objects.get(pk=artist.profile)
-            list_of_projects = Project.objects.select_related('profile').all().filter(profile=profile)
-            print(f'profile detail -> profile name: {profile.title}, about: {profile.about}, contact email: {profile.contact_email}, list of projects: {list_of_projects}')        
+            list_of_posts = Post.objects.select_related('profile').all().filter(profile=profile)
+            print(f'profile detail -> profile name: {profile.title}, about: {profile.about}, contact email: {profile.contact_email}, list of posts: {list_of_posts}')        
         except profile.DoesNotExist:
             raise Http404('profile does not exist')
         
-        return render(request, 'music_app/profile_detail.html', context={'profile': profile, 'artist': artist, 'list_of_projects': list_of_projects})
+        context={'profile': profile, 'artist': artist, 'list_of_posts': list_of_posts}
+        return render(request, 'music_app/profile_detail.html', context)
 
     @login_required
     @user_is_owner()
@@ -132,81 +135,82 @@ class ProfileOperations(LoginRequiredMixin, generic.DetailView):
         context = {'form': form, 'profile': profile, 'artist': artist}
         return render(request, 'music_app/profile_form.html', context)
 
-class ProjectOperations(LoginRequiredMixin, generic.DetailView, generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
-    model = Project
+class PostOperations(LoginRequiredMixin, generic.DetailView, generic.edit.UpdateView, generic.edit.DeleteView, generic.edit.CreateView):
+    model = Post
     
     @login_required
-    def projectDetail(request, pk):
+    def postDetail(request, pk):
         try:
-            project = Project.objects.get(pk=pk)
-            profile = Profile.objects.get(project=project)
+            post = Post.objects.get(pk=pk)
+            profile = Profile.objects.get(post=post)
             artist = Artist.objects.get(profile=profile)
-            print(f'project detail -> project name: {project.title}, about: {project.description}, profile: {project.profile.title}')        
-        except project.DoesNotExist:
-            raise Http404('Project does not exist')
+            print(f'post detail -> post name: {post.title}, about: {post.description}, mp3_file: {post.mp3_file}, profile: {post.profile.title}')        
+        except post.DoesNotExist:
+            raise Http404('Post does not exist')
         
-        return render(request, 'music_app/project_detail.html', context={'project': project, 'artist': artist, 'profile': profile})
+        context={'post': post, 'artist': artist, 'mp3_file': post.mp3_file, 'profile': profile}
+        return render(request, 'music_app/post_detail.html', context)
 
     @login_required
     @user_is_owner()
-    def updateProject(request, pk):
-        project = Project.objects.get(pk=pk)
-        profile = Profile.objects.get(project=project)
-        form = ProjectForm(instance=project) #request.GET
+    def updatePost(request, post_pk, pk):
+        artist = Artist.objects.get(pk=pk)
+        post = Post.objects.get(pk=post_pk)
+        profile = Profile.objects.get(post=post)
+        form = PostForm(instance=post)
         
         if request.method == 'POST':
-            project_data = request.POST.copy()
-            project_data['profile'] = profile.id
-            form = ProjectForm(project_data, instance=project)
+            post_data = request.POST.copy()
+            post_data['profile'] = profile.id
+            form = PostForm(post_data, request.FILES, instance=post)
+            print(f'mp3_file {form["mp3_file"]}')
             if form.is_valid():
-                project = form.save(commit=False)
-                project.profile = profile
-                
-                project.save()
-                #return redirect('profile-detail', pk) # either way works 
-                return HttpResponseRedirect(reverse('project-detail', args=[str(project.id)]))
+                post = form.save(commit=False)
+                post.profile = profile
+                post.save()
+                print(f"post was updated successfully, mp3_file: {post.mp3_file}")
+                return HttpResponseRedirect(reverse('post-detail', args=[str(post.id)]))
             
-        context = {'form': form, 'project': project, 'profile': profile}
-        return render(request, 'music_app/project_form.html', context)
+        context = {'MEDIA_URL': settings.MEDIA_URL, 'form': form, 'post': post, 'profile': profile, 'artist': artist}
+        return render(request, 'music_app/post_form.html', context)
 
     @login_required
     @user_is_owner()
-    def deleteProject(request, pk):
-        project = Project.objects.get(pk=pk)
-        profile = Profile.objects.get(project=project)
-        artist = Artist.objects.get(profile=profile)
-        form = ProjectForm(instance=project)
+    def deletePost(request, post_pk, pk):
+        artist = Artist.objects.get(pk=pk)
+        post = Post.objects.get(pk=post_pk)
+        profile = Profile.objects.get(post=post)
+        form = PostForm(instance=post)
         
         if request.method == 'POST':
-            project.delete()
-            return redirect('profile-detail', artist.id) # either way works 
-            #return HttpResponseRedirect(reverse('profile-detail', args=[str(profile.id)]))
+            post.delete()
+            return redirect('profile-detail', artist.id)
             
-        context = {'form': form, 'project': project}
-        return render(request, 'music_app/delete_project_form.html', context)
+        context = {'form': form, 'post': post, 'artist': artist, 'profile': profile}
+        return render(request, 'music_app/delete_post_form.html', context)
 
-    # Create a new project for a profile
+    # Create a new post for a profile
     @login_required
     @user_is_owner()
-    def createProject(request, pk):
-        form = ProjectForm()
+    def createPost(request, pk):
+        form = PostForm()
         artist = Artist.objects.get(pk=pk)
         print(f"artist id: {artist.id}, artist profile: {artist.profile}")
         profile = artist.profile
 
         if request.method == 'POST':
-            project_data = request.POST.copy()
-            project_data['profile'] = pk
-            form = ProjectForm(project_data)
+            post_data = request.POST.copy()
+            post_data['profile'] = pk
+            form = PostForm(post_data, request.FILES)
             if form.is_valid():
-                project = form.save(commit=False)
-                project.profile = profile
-                project.save()
+                post = form.save(commit=False)
+                post.profile = profile
+                post.save()
                 
                 return redirect('profile-detail', artist.id)
             
         context = {'form': form, 'profile': profile, 'artist': artist}
-        return render(request, 'music_app/create_project_form.html', context)
+        return render(request, 'music_app/create_post_form.html', context)
 
 class ArtistAuth(generic.DetailView):
     model = Artist
@@ -246,24 +250,3 @@ class ArtistAuth(generic.DetailView):
             
         context = {'user_form': user_form, 'artist_form': artist_form}
         return render(request, 'registration/register.html', context)
-
-# class UserOperations(generic.edit.CreateView):
-#     model = User
-#     def createUser(request):
-#         user_form = UserCreationForm()
-#         artist_form = ArtistForm()
-#         profile_form = ProfileForm()
-        
-#         if request.method == 'POST':
-#             user_form = UserCreationForm(request.POST)
-#             if user_form.is_valid():
-                
-#                 #createArtistAndProfile()
-                    
-#                     # create a new artist for user
-#                     # create new profile for artist
-#                 user_form.save()
-#             return redirect('login')
-            
-#         context = {'form': user_form}
-#         return render(request, 'music_app/create_user_form.html', context)

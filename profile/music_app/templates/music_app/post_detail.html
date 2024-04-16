@@ -1,0 +1,21 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+<h1>View {{ post.title }} Post:</h1>
+<p><li class="list-group-item">
+    <a href="{% url 'update-post' pk=artist.pk post_pk=post.id %}" class="btn btn-info">Edit Post Details</a>
+    <a href="{% url 'delete-post' pk=artist.pk post_pk=post.id %}" class="btn btn-danger">Delete {{ post.title}}</a>
+</li></p>
+<p><strong>Title:</strong> {{ post.title }}</p>
+<p><strong>Description:</strong> {{ post.description }}</p>
+<p><strong>Related Audio File (.mp3):</strong> {{ post.get_base_mp3_filename }} {% if not post.mp3_file %} No audio file uploaded {% endif %}
+<p><audio controls id="player">
+    <source src="{% if post.mp3_file %} {{post.mp3_file.url}} {% endif %}" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio></p>
+<p><strong>Portfolio:</strong> 
+    {{ post.portfolio }}
+    <a href="{{ post.profile.get_absolute_url }}" class="btn btn-info">View</a>
+</p>
+
+{% endblock %}
