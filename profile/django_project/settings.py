@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # my app name
     'music_app', 
+    'selenium',
     
     'django.contrib.admin',
     
