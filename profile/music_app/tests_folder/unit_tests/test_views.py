@@ -63,7 +63,7 @@ class HomepageViewsTestCase(ViewsTestCase):
     
     def test_index_view_by_address_if_not_logged_in(self):
         response = self.client.get('/')
-        self.assertRedirects(response, '/accounts/login/?next=/')
+        self.assertTemplateUsed(response, 'music_app/index.html')
         
     def test_index_view_logged_in(self):
         login = self.client.login(username='testuser', password='password123')

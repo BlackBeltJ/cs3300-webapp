@@ -15,7 +15,7 @@ from .models import *
 from .forms import *
 from .decorators import *
 
-@login_required(login_url='login')
+#@login_required(login_url='login')
 def index(request):
     artist_active_profiles = Artist.objects.select_related('profile').all().filter(profile__is_public=True)
     print('active profile query set', artist_active_profiles)
