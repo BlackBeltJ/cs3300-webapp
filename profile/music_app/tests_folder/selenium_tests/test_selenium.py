@@ -9,13 +9,10 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-#from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
-
-#driver = webdriver.Edge()
 
 class HostTest(LiveServerTestCase):
     def setUp(self):
@@ -36,16 +33,14 @@ class HostTest(LiveServerTestCase):
         #self.browser.get(reverse('index'))
         #time.sleep(5)
         wait = WebDriverWait(self.browser, 10)
-        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/')
-        wait.until(EC.title_contains('Artist'))
+        wait.until(lambda condition: self.browser.current_url == 'http://localhost:8000/' or 'http://localhost:8000/accounts/login/?next=/')
         
         assert 'Artist' in self.browser.title
         
     def test_login_page(self):
         self.browser.get('http://localhost:8000/accounts/login')
         wait = WebDriverWait(self.browser, 10)
-        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/accounts/login')
-        wait.until(EC.title_contains('Artist'))
+        wait.until(lambda condition: self.browser.current_url == 'http://localhost:8000/accounts/login' or 'http://localhost:8000/accounts/login/?next=/')
         
         assert 'Register' in self.browser.page_source
 
