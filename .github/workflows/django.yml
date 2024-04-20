@@ -19,13 +19,6 @@ jobs:
       uses: actions/setup-python@master
       with: 
         python-version: 3.11.7
-
-    - name: Setup directory
-      run: |
-        ls -la
-        pwd
-        cd ./cs3300-webapp/profile
-        ls -la
     
     - name: Run Tests
       
