@@ -9,21 +9,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.11.7]
 
     steps:
-    - name: Setup Python
-      uses: actions/setup-python@master
+    - uses: actions/checkout@v2
+    - name: Setup Python 3.11.7
+      uses: actions/setup-python@v2
       with: 
         python-version: 3.11.7
+
+    - name: Install dependencies
+      run: |
+        py -3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8
     
-    - name: Run Tests
-      
+    - name: Coverage Tests and Report
       run: |
         pip install coverage
         pwd
-        cd profile/
-        coverage run --source=music_app/profile manage.py test music_app.tests_folder.unit_tests
+        coverage run manage.py test music_app.tests_folder.unit_tests
+        coverage report
+
+    
