@@ -10,7 +10,7 @@
     </p>
     <!-- will need if loop here for validation -->
     <div>
-        <a href="{% url 'edit-profile' artist.id %}" class="btn btn-info"><strong>Edit Artist</a></strong> <!-- edit this link -->
+        <a href="{% url 'edit-artist' artist.id %}" class="btn btn-info"><strong>Edit Artist</a></strong> <!-- edit this link -->
         <a href="{% url 'delete-artist' artist.id %}" class="btn btn-danger"><strong>Delete Artist</a></strong>
     </div>
 {% endblock %}

@@ -85,6 +85,23 @@ class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView,
         #return render(request, 'music_app/artist_detail.html', context)
     
     @login_required(login_url='login')
+    @user_is_owner()
+    def editArtist(request, pk):
+        artist = Artist.objects.get(pk=pk)
+        form = ArtistForm(instance=artist)
+        
+        if request.method == 'POST':
+            artist_data = request.POST.copy()
+            form = ArtistForm(artist_data, instance=artist)
+            if form.is_valid():
+                artist = form.save(commit=False)
+                artist.save()
+                return redirect('artist-detail', artist.id)
+            
+        context = {'form': form, 'artist': artist}
+        return render(request, 'music_app/artist_form.html', context)
+    
+    @login_required(login_url='login')
     def artistDetailFromBase(request, user_pk):
         user_ = get_object_or_404(User, pk = user_pk)
         artist = Artist.objects.get(user=user_)
