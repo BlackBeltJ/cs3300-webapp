@@ -24,11 +24,7 @@ jobs:
       uses: actions/setup-python@master
       with: 
         python-version: 3.11.7
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install coverage
+    
     - name: Run Tests
       run: |
         coverage run manage.py test music_app.tests_folder.unit_tests
