@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 
-driver = webdriver.Edge()
+#driver = webdriver.Edge()
 
 class HostTest(LiveServerTestCase):
     def setUp(self):
@@ -40,41 +40,14 @@ class HostTest(LiveServerTestCase):
         wait.until(EC.title_contains('Artist'))
         
         assert 'Artist' in self.browser.title
-    
-    def test_artist_page(self):
-        self.browser.get('http://localhost:8000/artists/')
+        
+    def test_login_page(self):
+        self.browser.get('http://localhost:8000/accounts/login')
         wait = WebDriverWait(self.browser, 10)
-        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/artists/')
+        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/accounts/login')
         wait.until(EC.title_contains('Artist'))
         
-        assert 'Artist' in self.browser.title
-
-class LoginTest(LiveServerTestCase): # from 
-    def setUp(self):
-        self.browser=driver
-    def test_login(self):
-        self.browser.get("http://127.0.0.1:8000/")
-
-        login_link = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, 'login')))
-        login_link.click()
-
-        # The user sees a form to enter the username and password
-        username_input = self.browser.find_element(By.ID,'id_username')
-        password_input = self.browser.find_element(By.ID,'id_password')
-
-        # The user types in username and password
-        username_input.send_keys('admin')
-        password_input.send_keys('admin')
-
-        time.sleep(3)
-        
-        # The user submits the form
-        login_button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, 'login_button')))
-        login_button.click()
-
-        # The user sees the new post on the list page
-        logout_link = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, 'logout')))
-        self.assertIsNotNone(logout_link)
+        assert 'Register' in self.browser.page_source
 
 class LoginFormTest(LiveServerTestCase):
     def setUp(self):
@@ -89,78 +62,78 @@ class LoginFormTest(LiveServerTestCase):
         """
         Django Admin login test
         """
-        # Open the admin index page
         self.browser.get('http://localhost:8000/accounts/login')
-
 
         # Fill login information of the user
         username = self.browser.find_element(By.NAME, 'username')
         password = self.browser.find_element(By.NAME, 'password')
-        submit = self.browser.find_element(By.ID, 'submit')
+        submit = self.browser.find_element(By.NAME, 'submit')
         
-        time.sleep(3)
-        username.send_keys('admin')
-        password.send_keys('admin')
+        time.sleep(1)
+        username.send_keys('testUser')
+        password.send_keys('testpassword')
         
-        time.sleep(3)
-        #wait = WebDriverWait(self.browser, 5)
+        #time.sleep(2)
+        wait = WebDriverWait(self.browser, 5)
         submit.send_keys(Keys.RETURN)
 
-        #wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/accounts/login/?next=/accounts/login/')
-        #wait.until(EC.title_contains('Artist'))
-        assert 'admin' in self.browser.page_source
+        #time.sleep(2)
+        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/accounts/login/?next=/accounts/login/')
+        assert 'testUser' in self.browser.page_source
 
-        # Selenium knows it has to wait for page loads (except for AJAX requests)
-        # so we don't need to do anything about that, and can just
-        # call find_css. Since we can chain methods, we can
-        # call the built-in send_keys method right away to change the
-        # value of the field
-        #      self.wd.find_css('#id_username').send_keys("admin")
-        # for the password, we can now just call find_css since we know the page
-        # has been rendered
-        #      self.wd.find_css("#id_password").send_keys('pw')
-        # You're not limited to CSS selectors only, check
-        # http://seleniumhq.org/docs/03_webdriver.html for 
-        # a more comprehensive documentation.
-        #        self.wd.find_element_by_xpath('//input[@value="Log in"]').click()
-        # Again, after submiting the form, we'll use the find_css helper
-        # method and pass as a CSS selector, an id that will only exist
-        # on the index page and not the login page
-        #        self.wd.find_css("#content-main")
+class YourProfilePageTest(LiveServerTestCase):  
+    def setUp(self):
+        options = webdriver.ChromeOptions()
+        self.browser = webdriver.Chrome(options=options)
+        self.browser.implicitly_wait(5)
+        self.browser.set_page_load_timeout(5)
+        self.browser.get(self.live_server_url)
+        self.browser.maximize_window()
+        # first login
+        self.browser.get('http://localhost:8000/accounts/login')
 
-    # def test_login(self):
-    #     self.browser.get(self.live_server_url)
-    #     self.assertIn('Home', self.browser.title)
-    #     self.browser.find_element_by_link_text('Login').click()
-    #     self.assertIn('Login', self.browser.title)
-    #     username = self.browser.find_element_by_id('id_username')
-    #     username.send_keys('testuser')
-    #     password = self.browser.find_element_by_id('id_password')
-    #     password.send_keys('testpassword')
-    #     self.browser.find_element_by_id('submit').click()
-    #     self.assertIn('Home', self.browser.title)
-
-    # def test_register(self):
-    #     self.browser.get(self.live_server_url)
-    #     self.assertIn('Home', self.browser.title)
-    #     self.browser.find_element_by_link_text('Register').click()
-    #     self.assertIn('Register', self.browser.title)
-    #     username = self.browser.find_element_by_id('id_username')
-    #     username.send_keys('testuser')
-    #     email = self.browser.find_element_by_id('id_email')
-    #     email.send_keys('tesy@email.com')
-    #     password = self.browser.find_element_by_id('id_password')
-    #     password.send_keys('testpassword')
-    #     password2 = self.browser.find_element_by_id('id_password2')
-    #     password2.send_keys('testpassword')
-    #     self.browser.find_element_by_id('submit').click()
-    #     self.assertIn('Home', self.browser.title)
+        # Fill login information of the user
+        username = self.browser.find_element(By.NAME, 'username')
+        password = self.browser.find_element(By.NAME, 'password')
+        submit = self.browser.find_element(By.NAME, 'submit')
         
+        # enter login info
+        time.sleep(1)
+        username.send_keys('testUser')
+        password.send_keys('testpassword')
+        submit.send_keys(Keys.RETURN)
+        
+    def test_your_profile_page(self):
+        # reset back to home page
+        time.sleep(1)
+        self.browser.get('http://localhost:8000/')
+        
+        # go to your profile  
+        wait = WebDriverWait(self.browser, 5)     
+        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/accounts/login/')
+        yourProfile = self.browser.find_element(By.NAME, 'yourProfile')
+        yourProfile.send_keys(Keys.RETURN)
+        
+        wait.until(lambda condition: self.browser.current_url != 'http://localhost:8000/')
+        assert 'test1' in self.browser.page_source # 'test1' is testUser's profile name, checking that the profile page is correct
 
-   # chrome_browser.get('https://www.selenium.dev/documentation/')
-   # assert 'selenium' in chrome_browser.title
+    def test_artist_page(self):
+        self.browser.get('http://localhost:8000/artists/')
+        wait = WebDriverWait(self.browser, 5)
+        wait.until(lambda condition: self.browser.current_url == 'http://localhost:8000/artists/')
+        
+        assert 'List of artists' in self.browser.page_source
+        
+    def test_profile_page(self):
+        self.browser.get('http://localhost:8000/artists/37/profile')
+        wait = WebDriverWait(self.browser, 5)
+        wait.until(lambda condition: self.browser.current_url == 'http://localhost:8000/artists/37/profile')
+        
+        assert 'test1' in self.browser.page_source
+        
+    def test_post_page(self):
+        self.browser.get('http://localhost:8000/artist/37/profile/create_post')
+        wait = WebDriverWait(self.browser, 5)
+        wait.until(lambda condition: self.browser.current_url == 'http://localhost:8000/artist/37/profile/create_post')
 
-#    elem = chrome_browser.find_element(By.NAME, 'p')
- #   elem.send_keys('selenium' + Keys.RETURN)
-
-  #  chrome_browser.quit()
+        assert 'Create new post' in self.browser.page_source
