@@ -24,4 +24,5 @@ jobs:
       run: |
         pip install coverage
         pwd
+        ls
         coverage run manage.py test music_app.tests_folder.unit_tests
