@@ -13,10 +13,8 @@ urlpatterns = [
     #.as_view() is a method that returns a default view function
     #<uuid:pk> is a path converter that matches a UUID
     path('', views.index, name='index'), # default view, home page
-    
     # register
     path('register/', views.ArtistAuth.registerPage, name='register-page'),
-    
     # artist operations (display, create, edit, delete, etc)
     path('artists/', views.ArtistOperations.displayArtists, name='artists'),
     # had to create another path for artist-detail-from-base because I can't access the artist from base_template
@@ -25,17 +23,14 @@ urlpatterns = [
     path('artists/<int:pk>', views.ArtistOperations.artistDetail, name='artist-detail'),
     #path('accounts/create_artist/', views.ArtistOperations.createArtistAndProfile, name='create-artist'),
     path('delete_artist/<int:pk>', views.ArtistOperations.deleteArtistAndProfile, name='delete-artist'),
-    
     # profile operations (display, create, edit, delete, etc)
     path('artists/<int:pk>/profile', views.ProfileOperations.profileDetail, name='profile-detail'),
     path('artist/<int:pk>/profile/edit', views.ProfileOperations.editProfile, name='edit-profile'),
-    
     # post operations (display, create, edit, delete, etc)
     path('artist/?/profile/post/<int:pk>', views.PostOperations.postDetail, name='post-detail'),
     path('artist/<int:pk>/profile/create_post', views.PostOperations.createPost, name='create-post'),
     path('artist/<int:pk>/profile/update_post/<int:post_pk>', views.PostOperations.updatePost, name='update-post'),
     path('artist/<int:pk>/profile/delete_post/<int:post_pk>', views.PostOperations.deletePost, name='delete-post'),
-
     # artist accounts
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.ArtistAuth.registerPage, name='register-page'),
@@ -50,9 +45,6 @@ urlpatterns = [
     #accounts/ password_reset/done/ [name='password_reset_done']
     #accounts/ reset/<uidb64>/<token>/ [name='password_reset_confirm']
     #accounts/ reset/done/ [name='password_reset_complete']
-    
-    #path('login/', views.ArtistAuth.login, name='login'),
-    #path('/accounts/logout/', views.ArtistAuth.logged_outPage, name='logout'),
     
 ]
 

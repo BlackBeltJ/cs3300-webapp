@@ -67,7 +67,7 @@ class ArtistOperations(LoginRequiredMixin, generic.ListView, generic.DetailView,
     @login_required
     #@allowed_users(allowed_roles=['artist_role'])
     def displayArtists(request):
-        list_of_artists = Artist.objects.all()
+        list_of_artists = Artist.objects.select_related('profile').all().filter(profile__is_public=True)
         print('list of artists', list_of_artists)
         return render(request, 'music_app/artist_list.html', context={'list_of_artists': list_of_artists})
     

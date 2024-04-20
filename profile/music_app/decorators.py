@@ -35,11 +35,11 @@ def allowed_users(allowed_roles=['admin_role','artist_role']):
 def user_is_owner():
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
-            print('args', args)
+            print('args', args) # displays args and kwargs for debugging purposes
             print('kwargs', kwargs)
-            # grab the current user
+            # grab the current user from 'request'
             user = request.user
-            # use the kwarg pk from the view_func to get the artist
+            # use the kwarg pk from the view_func to get the artist object
             artist = Artist.objects.get(id=kwargs['pk'])
             # check if the user is associated to the artist
             if user == artist.user:
@@ -47,6 +47,5 @@ def user_is_owner():
             else:
                 messages.warning(request, 'You do not have permission to perform that action ')
                 return redirect('index')
-                #return HttpResponse('You are not authorized to view this page')
         return wrapper_func
     return decorator

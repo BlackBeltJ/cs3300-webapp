@@ -13,6 +13,11 @@
     <source src="{% if post.mp3_file %} {{post.mp3_file.url}} {% endif %}" type="audio/mp3">
     Your browser does not support the audio element.
 </audio></p>
+<p><strong>Related Video File (.mp4):</strong> {{ post.get_base_mp4_filename }} {% if not post.mp4_file %} No video file uploaded {% endif %}
+<p><video name="media" controls width='50%' height='40%'>
+    <source src="{% if post.mp4_file %} {{post.mp4_file.url}} {% endif %}" type="video/mp4">
+    Your browser does not support the video tag.
+</video></p>
 <p><strong>Portfolio:</strong> 
     {{ post.portfolio }}
     <a href="{{ post.profile.get_absolute_url }}" class="btn btn-info">View</a>
