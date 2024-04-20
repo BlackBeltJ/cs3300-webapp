@@ -23,6 +23,7 @@ jobs:
     - name: Setup directory
       run: |
         ls -la
+        pwd
         cd ./cs3300-webapp/profile
         ls -la
     
