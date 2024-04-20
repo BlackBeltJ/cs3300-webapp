@@ -25,4 +25,5 @@ jobs:
       run: |
         pip install coverage
         pwd
+        cd profile/
         coverage run --source=music_app/profile manage.py test music_app.tests_folder.unit_tests
