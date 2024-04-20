@@ -19,8 +19,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install coverage
         pip install django==4.2
+        pip install coverage
+        pip install selenium
 
     - name: Activate Virtual Environment
       run: |
