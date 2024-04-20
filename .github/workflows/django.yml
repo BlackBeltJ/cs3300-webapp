@@ -21,7 +21,7 @@ jobs:
         python-version: 3.11.7
     
     - name: Run Tests
-      working-directory: profile
+      working-directory: ../profile
       run: |
         pip install coverage
         pwd
