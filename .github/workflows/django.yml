@@ -18,12 +18,15 @@ jobs:
         python-version: 3.11.7
 
     - name: Install dependencies
-      run: pip install coverage
+      run: |
+        pip install coverage
+        pip install django==4.2
 
     - name: Activate Virtual Environment
       run: |
         pwd
         ls -la  # List all files in the current directory for debugging purposes
+        echo $GITHUB_WORKSPACE
         cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile # Change directory to your Django project root
         source djvenv/Scripts/activate
     
