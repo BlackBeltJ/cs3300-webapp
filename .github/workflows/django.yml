@@ -19,6 +19,13 @@ jobs:
 
     - name: Install dependencies
       run: pip install coverage
+
+    - name: Activate Virtual Environment
+      run: |
+        pwd
+        ls -la  # List all files in the current directory for debugging purposes
+        cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile # Change directory to your Django project root
+        source djvenv/Scripts/activate
     
     - name: Coverage Tests and Report
       run: |
