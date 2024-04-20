@@ -19,10 +19,15 @@ jobs:
       uses: actions/setup-python@master
       with: 
         python-version: 3.11.7
+
+    - name: Copy manage.py path
+      run: |
+        COPY manage.py /cs3300-webapp/profile/manage.py
     
     - name: Run Tests
       run: |
         pip install coverage
         pwd
         ls
+        py -3 /cs3300-webapp/profile/manage.py "$i"
         coverage run manage.py test music_app.tests_folder.unit_tests
