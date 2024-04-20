@@ -26,16 +26,12 @@ jobs:
 
     - name: Activate Virtual Environment
       run: |
-        pwd
-        ls -la  # List all files in the current directory for debugging purposes
         echo $GITHUB_WORKSPACE
         cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile # Change directory to your Django project root
         source djvenv/Scripts/activate # activate virtual env
     
     - name: Coverage Tests and Report
       run: |
-        pwd
-        ls -la  # List all files in the current directory for debugging purposes
         cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile  # Change directory to your Django project root
         coverage run manage.py test music_app.tests_folder.unit_tests
         coverage report
