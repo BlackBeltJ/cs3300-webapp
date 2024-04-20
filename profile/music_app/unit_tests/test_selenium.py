@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 
-
+driver = webdriver.Edge()
 
 class HostTest(LiveServerTestCase):
     def setUp(self):
@@ -48,6 +48,33 @@ class HostTest(LiveServerTestCase):
         wait.until(EC.title_contains('Artist'))
         
         assert 'Artist' in self.browser.title
+
+class LoginTest(LiveServerTestCase): # from 
+    def setUp(self):
+        self.browser=driver
+    def test_login(self):
+        self.browser.get("http://127.0.0.1:8000/")
+
+        login_link = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, 'login')))
+        login_link.click()
+
+        # The user sees a form to enter the username and password
+        username_input = self.browser.find_element(By.ID,'id_username')
+        password_input = self.browser.find_element(By.ID,'id_password')
+
+        # The user types in username and password
+        username_input.send_keys('admin')
+        password_input.send_keys('admin')
+
+        time.sleep(3)
+        
+        # The user submits the form
+        login_button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, 'login_button')))
+        login_button.click()
+
+        # The user sees the new post on the list page
+        logout_link = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, 'logout')))
+        self.assertIsNotNone(logout_link)
 
 class LoginFormTest(LiveServerTestCase):
     def setUp(self):
