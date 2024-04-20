@@ -20,6 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install django==4.2
+        pip install django_bootstrap5
         pip install coverage
         pip install selenium
 
