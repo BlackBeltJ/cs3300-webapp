@@ -19,11 +19,16 @@ jobs:
       uses: actions/setup-python@master
       with: 
         python-version: 3.11.7
+
+    - name: Setup directory
+      run: |
+        ls -la
+        cd ./cs3300-webapp/profile
+        ls -la
     
     - name: Run Tests
-      working-directory: ../profile
+      
       run: |
         pip install coverage
         pwd
-        ls
         coverage run manage.py test music_app.tests_folder.unit_tests
