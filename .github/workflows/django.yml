@@ -16,11 +16,15 @@ jobs:
       uses: actions/setup-python@v2
       with: 
         python-version: 3.11.7
+
+    - name: Install dependencies
+      run: pip install coverage
     
     - name: Coverage Tests and Report
       run: |
-        pip install coverage
         pwd
+        ls -la  # List all files in the current directory for debugging purposes
+        cd /home/runner/work/cs3300-webapp/profile  # Change directory to your Django project root
         coverage run manage.py test music_app.tests_folder.unit_tests
         coverage report
 
