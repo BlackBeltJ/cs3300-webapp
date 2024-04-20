@@ -32,4 +32,4 @@ jobs:
       run: |
         pip install coverage
         pwd
-        coverage run manage.py test music_app.tests_folder.unit_tests
+        coverage run --source=music_app/profile manage.py test music_app.tests_folder.unit_tests
