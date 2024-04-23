@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # my app name
     'music_app', 
+    'selenium',
     
     'django.contrib.admin',
     
@@ -144,3 +145,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# selenium driver
+SELENIUM_WEBDRIVER = 'Chrome'

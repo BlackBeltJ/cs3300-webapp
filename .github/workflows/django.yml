@@ -1,0 +1,46 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Python 3.11.7
+      uses: actions/setup-python@v2
+      with: 
+        python-version: 3.11.7
+
+    - name: Install dependencies
+      run: |
+        cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile
+        pip install -r requirements.txt 
+        
+        
+
+    - name: Activate Virtual Environment
+      run: |
+        echo $GITHUB_WORKSPACE
+        cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile # Change directory to your Django project root
+        source djvenv/Scripts/activate # activate virtual env
+    
+    - name: Coverage Tests and Report
+      run: |
+        cd /home/runner/work/cs3300-webapp/cs3300-webapp/profile  # Change directory to your Django project root
+        coverage run manage.py test music_app.tests_folder.unit_tests
+        coverage report
+        coverage report -m > coverage_report.txt
+
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-report
+        path: coverage_report.txt
+
+    

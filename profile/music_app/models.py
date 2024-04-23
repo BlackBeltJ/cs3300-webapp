@@ -62,6 +62,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField("Post Description", blank = False)
     mp3_file = models.FileField(upload_to='audio/mp3/', blank=True, default = 'audio/mp3/default_audio.mp3')#null=True
+    mp4_file = models.FileField(upload_to='video/mp4/', blank=True, default = 'video/mp4/default_video.mp4')#null=True
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
@@ -75,6 +76,9 @@ class Post(models.Model):
     
     def get_base_mp3_filename(self):
         return os.path.basename(self.mp3_file.name)
+    
+    def get_base_mp4_filename(self):
+        return os.path.basename(self.mp4_file.name)
 
 # class User(models.Model):
 #     username = models.CharField(max_length=200)

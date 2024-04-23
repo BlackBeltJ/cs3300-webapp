@@ -1,0 +1,24 @@
+{% extends 'music_app/base_template.html' %}
+
+{% block content %}
+
+<h1>Edit {{ artist.name }}:</h1>
+<h4>Current Artist Information:</h4>
+<p><strong>Name:</strong> {{ artist.name }}</p>
+<p><strong>Email:</strong> {{ artist.email }}</p>
+<p><strong>Genre:</strong> <a href="https://www.musicgenreslist.com/">{{ artist.genre }}</a></p>
+<p><strong>Instrument:</strong> {{ artist.instrument }}</p>
+<p><strong>Profile:</strong>
+    <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
+
+<h4>Update Artist Information:</h4>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <a href="{% url 'artist-detail' artist.id %}" class="btn btn-danger">Cancel</a>
+    <input type="submit" value="Save" class="btn btn-success">
+  </form>
+
+{% endblock %}
