@@ -6,15 +6,11 @@
     <p><strong>email:</strong> {{ artist.email }}</p>
     <p><strong>artist genre:</strong> <a href="https://www.musicgenreslist.com/">{{ artist.genre }}</a></p>
     <p><strong>artist profile:</strong>
+        <!-- below link points to artist detail page -->
         <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
     </p>
-    <!-- will need if loop here for validation -->
     <div>
         <a href="{% url 'edit-artist' artist.id %}" class="btn btn-info"><strong>Edit Artist</a></strong> <!-- edit this link -->
         <a href="{% url 'delete-artist' artist.id %}" class="btn btn-danger"><strong>Delete Artist</a></strong>
     </div>
 {% endblock %}
-
-<!--
-<a href="{% url 'portfolio-details' %}">{{student.portfolio }}</a>
--->
