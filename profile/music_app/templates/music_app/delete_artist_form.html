@@ -3,15 +3,11 @@
 {% block content %}
 <p>Are you sure you want to delete this artist: <strong>{{ artist.name }}</strong>?</p>
 
+<!-- Uses Artist information form to delete -->
 <form action="" method="POST">
     {% csrf_token %}
     <a href="{% url 'artist-detail' artist.id %}" class="btn btn-info">Cancel</a>
     <input type="submit" value="delete" class="btn btn-danger">
-    
   </form>
 
 {% endblock %}
-
-<!--
-    <input type="hidden" name="pk" value="{{ post.pk }}">
--->

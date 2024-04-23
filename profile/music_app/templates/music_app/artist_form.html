@@ -9,8 +9,10 @@
 <p><strong>Genre:</strong> <a href="https://www.musicgenreslist.com/">{{ artist.genre }}</a></p>
 <p><strong>Instrument:</strong> {{ artist.instrument }}</p>
 <p><strong>Profile:</strong>
+  <!-- below link points to artist detail page -->
     <a href="{{ artist.profile.get_absolute_url }}">{{ artist.profile.title }}</a>
 
+<!-- Artist information form -->
 <h4>Update Artist Information:</h4>
   <form action="" method="POST">
     {% csrf_token %}

@@ -3,15 +3,11 @@
 {% block content %}
 <p>Are you sure you want to delete "{{ post.title }}"?</p>
 
+<!-- Uses Post information form to delete -->
 <form action="" method="POST">
     {% csrf_token %}
     <a href="{% url 'post-detail' post.id %}" class="btn btn-info">Cancel</a>
     <input type="submit" value="delete" class="btn btn-danger">
-    
   </form>
 
 {% endblock %}
-
-<!--
-    <input type="hidden" name="pk" value="{{ post.pk }}">
--->

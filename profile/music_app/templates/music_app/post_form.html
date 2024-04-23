@@ -7,6 +7,8 @@
 <p><strong>Title:</strong> {{ post.title }}</p>
 <p><strong>Description:</strong> {{ post.description }}</p>
 
+<!-- Post information form -->
+<!-- enctype="multipart/form-data" allows files to be processed -->
 <h4>Update Post Information:</h4>
   <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}

@@ -3,6 +3,8 @@
 {% block content %}
 <h2>Create new post</h2>
 
+<!-- Post information form -->
+<!-- enctype="multipart/form-data" allows files to be processed -->
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <table>
