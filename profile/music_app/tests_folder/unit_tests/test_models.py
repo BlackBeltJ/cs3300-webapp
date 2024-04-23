@@ -3,33 +3,9 @@ from django.contrib.auth.models import User
 from music_app.models import Artist, Profile, Post
 import re
 
-class ModelTestCase(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        # Artist.objects.create(name="Test Artist",
-        #     email="testy@email.com",
-        #     genre="Rock",
-        #     instrument="Guitar",
-        #     #user=self.user,
-        # )
-        pass
-        #print("setUpTestData: Run once to set up non-modified data for all class methods.")
-        #return super().setUpTestData()
-        
-    # def test_false_is_false(self):
-    #     print("Method: test_false_is_false.")
-    #     self.assertFalse(False)
-            
-    # def test_false_is_true(self):
-    #     print("Method: test_false_is_true.")
-    #     self.assertTrue(False)
-            
-    # def test_true_is_true(self):
-    #     print("Method: test_true_is_true.")
-    #     self.assertTrue(True)
-    
+class ModelTestCase(TestCase):    
     def setUp(self):
+        # init a user 
         self.user = User.objects.create_user(
             username='testuser', password='password123')
         
@@ -39,28 +15,20 @@ class ModelTestCase(TestCase):
             email="testy@email.com",
             genre="Rock",
             instrument="Guitar",
+            # link user to artist
             user=self.user,
         )
         
-        # profile should automatically be created with artist
-        # # init a profile
-        # self.profile = Profile.objects.create(
-        #     title="Test Profile",
-        #     is_public=True,
-        #     about="This is a test profile.",
-        #     contact_email="email@email.com"
-        # )
+        # link artist to profile
         self.profile = self.artist.profile
         
         # create a post
         self.post = Post.objects.create(
             title="Test Post",
             description="This is a test post.",
+            # link post to profile
             profile=self.profile
         )
-        
-        #print("setUp: Run once for every test method to setup clean data.")
-        #return super().setUp()
     
     # unit tests for artist creation
     def test_artist_creation(self):
@@ -79,18 +47,17 @@ class ModelTestCase(TestCase):
         self.assertEqual(self.post.description, "This is a test post.")
         self.assertEqual(self.post.profile, self.profile)
         self.assertEqual(str(self.post), self.post.title)
+        # test that default_audio.mp3 is the default audio file
         self.assertEqual(self.post.get_base_mp3_filename(), 'default_audio.mp3')
-        # print(self.post.get_absolute_url())
-        # print(f'/artist/{self.artist.id}/profile/post/{self.post.id}/')
+        
+        # regex for any three characters
         expected_url = f'/artist/???/profile/post/{self.post.id}'
         actual_url = self.post.get_absolute_url()
+        # split up the url to isolate the last portion for comparison
         start_index = expected_url.find('/artist/') + len('/artist/')
         end_index = expected_url.find('/profile/')
         expected_url_without_artist = expected_url[:start_index] + '...' + expected_url[end_index:]
         actual_url_without_artist = actual_url[:start_index] + '...' + actual_url[end_index:]
-        # print(f'actual_url: {actual_url}')
-        # print(f'expected_url: {expected_url}')
-        # print(f'expected_url_without_artist: {expected_url_without_artist}')
         self.assertEqual(actual_url_without_artist, expected_url_without_artist)
     
     # unit tests for profile creation

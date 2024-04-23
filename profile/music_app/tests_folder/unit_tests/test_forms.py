@@ -14,6 +14,7 @@ class PostFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
         
     def test_missing_title_invalid(self):
+        # testing that the form is invalid if the title is missing
         data = {'title': "", 'description': "description"}
         form = PostForm(data=data)
         self.assertFalse(form.is_valid() and self.assertIn('title', form.errors))

@@ -8,7 +8,7 @@
 <p><strong>About:</strong> {{ profile.about }}</p>
 <p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 
-
+<!-- Profile information form -->
 <h4>Update Profile Information:</h4>
   <form action="" method="POST">
     {% csrf_token %}
@@ -20,7 +20,3 @@
   </form>
 
 {% endblock %}
-
-<!--
-<p> for dev only: artist id: {{ artist.id }}, profile id: {{ profile.id }} </p>
--->

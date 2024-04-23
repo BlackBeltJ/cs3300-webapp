@@ -5,6 +5,7 @@
 
   <form method="post">
     {% csrf_token %}
+    <!-- Display two forms to create User and Artist at the same time -->
     {{ user_form.as_p }}
     {{ artist_form.as_p}}
     <input type="submit" name="Register" />

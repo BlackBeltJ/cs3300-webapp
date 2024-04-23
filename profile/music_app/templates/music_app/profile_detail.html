@@ -9,6 +9,7 @@
 <p><strong>contact email:</strong> {{ profile.contact_email }}</p>
 <br>
 <h4>List of {{ artist.name }}'s Posts:</h4>
+    <!-- if there are posts -->
     {% if list_of_posts %}
         <div class="container">
             <ul class="list-group">
@@ -19,13 +20,17 @@
                         <strong> Post title:</strong> {{ post.title }}
                         <br>
                         <strong>Description:</strong> {{ post.description }}
+                        <!-- Check for if the Post has a file to display, then display if file exists -->
                         <p><strong>Related Audio File (.mp3): {{ post.get_base_mp3_filename }} {% if not post.mp3_file %} No audio file uploaded {% endif %}</strong>
+                            <!-- Audio player -->
                             <p><audio controls id="player">
                                 <source src="{% if post.mp3_file %} {{post.mp3_file.url}} {% endif %}" type="audio/mp3">
                                 Your browser does not support the audio element.
                             </audio></p>
                         </p>
+                        <!-- Check if Post has a video to display, then display if video exists -->
                         <p><strong>Related Video File (.mp4):</strong> {{ post.get_base_mp4_filename }} {% if not post.mp4_file %} No video file uploaded {% endif %}
+                            <!-- Video Player -->
                             <p><video name="media" controls width='50%' height='40%'>
                                 <source src="{% if post.mp4_file %} {{post.mp4_file.url}} {% endif %}" type="video/mp4">
                                 Your browser does not support the video tag.
@@ -48,7 +53,3 @@
     {% endif %}
 
 {% endblock %}
-
-<!--
-<p><strong>for dev purposes.. profile.get_absolute_url:</strong> {{ profile.get_absolute_url }}</p>
--->

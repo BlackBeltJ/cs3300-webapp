@@ -5,7 +5,8 @@
 {% block content %}
 <h1><strong>Artist Profiles</strong></h1>
 
-{% if artist_active_profiles%}
+<!-- Recieves list of active/public artists -->
+{% if artist_active_profiles %}
 <h3>List of artists with public profiles</h3>
 <div class="container">
     <ul class="list-group">
@@ -24,13 +25,4 @@
 <p>No public artist profiles</p>
 {% endif %}
 
-
 {% endblock %}
-
-
-<!--
-{% if user.is_authenticated %}
-{% else %}
-<p>Please login to view artist profiles</p>
-{% endif %}
--->
